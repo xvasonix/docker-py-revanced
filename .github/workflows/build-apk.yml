@@ -75,7 +75,7 @@ jobs:
       - name: Get Date
         id: get-date
         run: |
-          echo "date=$(TZ='Asia/Seoul' date +"%Y.%m.%d-%H.%M.%S")" >> $GITHUB_OUTPUT
+          echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H.%M.%S")" >> $GITHUB_OUTPUT
           curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md
 
       - name: Delete Older Releases
@@ -89,7 +89,7 @@ jobs:
         with:
           artifacts: "*-output.apk"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: Build-${{ steps.get-date.outputs.date }}
+          tag: Build_${{ steps.get-date.outputs.date }}
           artifactErrorsFailBuild: true
 
       - name: Sleep for 10 seconds
