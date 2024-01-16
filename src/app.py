@@ -47,6 +47,7 @@ class APP(object):
             f"{app_name}_SPACE_FORMATTED_PATCHES".upper(),
             config.global_space_formatted,
         )
+        self.options_name = config.env.str(f"{app_name}_OPTIONS_FILE_NAME".upper(), config.global_options_name)
 
     def download_apk_for_patching(self: Self, config: RevancedConfig) -> None:
         """Download apk to be patched."""

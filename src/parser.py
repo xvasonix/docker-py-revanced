@@ -176,7 +176,7 @@ class Parser(object):
             self.KEYSTORE_ARG,
             app.keystore_name,
             self.OPTIONS_ARG,
-            "options.json",
+            app.options_name,
         ]
         if app.experiment:
             logger.debug("Using experimental features")

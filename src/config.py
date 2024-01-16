@@ -36,3 +36,4 @@ class RevancedConfig(object):
         self.apps = env.list("PATCH_APPS", default_build)
         self.global_old_key = env.bool("GLOBAL_OLD_KEY", True)
         self.global_space_formatted = env.bool("GLOBAL_SPACE_FORMATTED_PATCHES", True)
+        self.global_options_name = env.str("GLOBAL_OPTIONS_FILE_NAME", "options.json")
