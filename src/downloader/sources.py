@@ -78,4 +78,6 @@ apk_sources = {
     "spotify-lite": APK_MONK_APK_URL,
     "digitales": APK_MONK_APK_URL,
     "scbeasy": APK_MONK_APK_URL,
+    "youtube_extended_red": f"{APK_MIRROR_BASE_APK_URL}/google-inc/youtube/",
+    "youtube_extended_blue": f"{APK_MIRROR_BASE_APK_URL}/google-inc/youtube/",
 }
