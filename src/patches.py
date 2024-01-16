@@ -70,8 +70,6 @@ class Patches(object):
         "reddit.news": "reddit-news",
         "at.gv.bmf.bmf2go": "finanz-online",
         "com.tumblr": "tumblr",
-        "app.red.android.youtube": "youtube_extended_red",
-        "app.blue.android.youtube": "youtube_extended_blue",
     }
 
     @staticmethod
