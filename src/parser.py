@@ -114,7 +114,6 @@ class Parser(object):
         if app.space_formatted:
             for patch in patches:
                 normalized_patch = patch["name"].lower().replace(" ", "-")
-                logger.debug(f"patches in patch : {normalized_patch}")
                 (
                     self.include(patch["name"])
                     if normalized_patch not in app.exclude_request
@@ -124,7 +123,6 @@ class Parser(object):
                 )
             for patch in patches_dict["universal_patch"]:
                 normalized_patch = patch["name"].lower().replace(" ", "-")
-                logger.debug(f"patches_dict in patch : {normalized_patch}")
                 self.include(patch["name"]) if normalized_patch in app.include_request else ()
         else:
             for patch in patches:
@@ -195,7 +193,7 @@ class Parser(object):
         args[1::2] = map(self.config.temp_folder.joinpath, args[1::2])
         if app.old_key and "v4" in version:
             # https://github.com/ReVanced/revanced-cli/issues/272#issuecomment-1740587534
-            old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced"]
+            old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced", "-i Custom branding icon YouTube", "-i Custom branding name YouTube"]
             args.extend(old_key_flags)
         if self.config.ci_test:
             self.exclude_all_patches()
