@@ -120,9 +120,11 @@ class Parser(object):
                     else self.exclude(
                         patch["name"],
                     )
+                    logger.debug(f"patches in patch : {normalized_patch}")
                 )
             for patch in patches_dict["universal_patch"]:
                 normalized_patch = patch["name"].lower().replace(" ", "-")
+                logger.debug(f"patches_dict in patch : {normalized_patch}")
                 self.include(patch["name"]) if normalized_patch in app.include_request else ()
         else:
             for patch in patches:
