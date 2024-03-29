@@ -114,6 +114,7 @@ class Parser(object):
         if app.space_formatted:
             for patch in patches:
                 normalized_patch = patch["name"].lower().replace(" ", "-")
+                logger.debug(f"patches in patch : {normalized_patch}")
                 (
                     self.include(patch["name"])
                     if normalized_patch not in app.exclude_request
