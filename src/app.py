@@ -83,7 +83,7 @@ class APP(object):
         """
         current_date = datetime.now(timezone("Asia/Kolkata"))
         formatted_date = current_date.strftime("%Y%b%d_%I%M%p").upper()
-        return f"Re-{self.app_name}-{slugify(self.app_version)}-{formatted_date}-output.apk"
+        return f"Re-{self.app_name}-{slugify(self.app_version)}.apk"
 
     def __str__(self: "APP") -> str:
         """Returns the str representation of the app."""
