@@ -88,6 +88,7 @@ class Patches(object):
             a string, which is the package name corresponding to the given app name.
         """
         for package, app_name in Patches.revanced_package_names.items():
+            logger.debug(f"package: {package} ,app_name: {app_name}")
             if app_name == app:
                 return package
         msg = f"App {app} not supported officially yet. Please provide package name in env to proceed."
