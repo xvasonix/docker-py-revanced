@@ -193,7 +193,7 @@ class Parser(object):
         args[1::2] = map(self.config.temp_folder.joinpath, args[1::2])
         if app.old_key and "v4" in version:
             # https://github.com/ReVanced/revanced-cli/issues/272#issuecomment-1740587534
-            old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced", "-i", "Custom branding icon YouTube", "-i", "Custom branding name YouTube"]
+            old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced", "-i", "Change player flyout panel toggles", "-i", "Custom branding heading", "-i", "Custom branding icon YouTube", "-i", "Custom branding name YouTube", "-i", "Hide animated button background", "-i", "Hide double tap to like animations", "-i", "Hide fullscreen button", "-i", "Hide player buttons background", "-i", "Hide player chapters", "-i", "Hide voice search button", "-i", "MaterialYou", "-i", "Settings icons"]
             args.extend(old_key_flags)
         if self.config.ci_test:
             self.exclude_all_patches()
