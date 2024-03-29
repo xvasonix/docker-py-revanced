@@ -116,7 +116,6 @@ class Parser(object):
                 normalized_patch = patch["name"].lower().replace(" ", "-")
                 (
                     self.include(patch["name"])
-                    logger.debug(f"patches in patch : {normalized_patch}")
                     if normalized_patch not in app.exclude_request
                     else self.exclude(
                         patch["name"],
