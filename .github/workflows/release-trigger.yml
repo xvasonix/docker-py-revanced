@@ -81,10 +81,10 @@ jobs:
           threshold=$((60 * 60)) # 1 시간 in seconds
           if [ $difference -ge $threshold ]; then
             echo "Time difference is greater than or equal to 30 minutes."
-            exit 0
+            exit 1
           else
             echo "Time difference is less than 30 minutes."
-            exit 1
+            exit 0
           fi
         
       - name: Perform action on release
