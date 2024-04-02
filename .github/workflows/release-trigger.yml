@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      
     - name: Get latest release
       id: latest_release
       run: |
@@ -33,10 +34,10 @@ jobs:
         threshold=$((30 * 60)) # 30 minutes in seconds
         if [ $difference -ge $threshold ]; then
           echo "Time difference is greater than or equal to 30 minutes."
-          exit 1
+          exit 0
         else
           echo "Time difference is less than 30 minutes."
-          exit 0
+          exit 1
         fi
       
     - name: Perform action on release
@@ -45,3 +46,11 @@ jobs:
         # 여기에 실행할 작업을 추가하세요.
         # 예를 들어, 30분 이상 차이가 있을 때 실행되어야 하는 작업을 여기에 추가할 수 있습니다.
         echo "Performing action on release with time difference greater than or equal to 30 minutes."
+        
+    - name: checkout repo content
+      if: ${{ success() }}
+      uses: actions/checkout@main
+
+    - name: Trigger workflow if new release
+      if: ${{ success() }}
+      uses: ./.github/workflows/build-apk.yml
