@@ -78,7 +78,7 @@ jobs:
         id: check_time
         run: |
           difference=${{ steps.time_difference.outputs.difference }}
-          threshold=$((60 * 60)) # 1 시간 in seconds
+          threshold=$((20 * 60 * 60)) # 1 시간 in seconds
           if [ $difference -ge $threshold ]; then
             echo "Time difference is greater than or equal to 30 minutes."
             exit 1
