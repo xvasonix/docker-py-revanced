@@ -50,16 +50,7 @@ concurrency:
     group: ${{ github.head_ref || github.run_id }}
     cancel-in-progress: true
     
-jobs:
-    build-apk:
-      uses: ./.github/workflows/build-artifact.yml
-      with:
-        COMMIT_CHANGELOG: ${{ inputs.COMMIT_CHANGELOG }}
-        DEBUG_ENABLED: ${{ inputs.DEBUG_ENABLED }}
-      secrets:
-        ENVS: ${{ secrets.ENVS }}
-        REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-        
+jobs:        
     check-release:
       runs-on: ubuntu-latest
 
@@ -101,8 +92,14 @@ jobs:
         run: |
           # 여기에 실행할 작업을 추가하세요.
           # 예를 들어, 30분 이상 차이가 있을 때 실행되어야 하는 작업을 여기에 추가할 수 있습니다.
-          echo "Performing action on release with time difference greater than or equal to 30 minutes."
-     
-      - name: Trigger workflow if new release
-        if: ${{ success() }}
-        uses: ./.github/workflows/build-apk.yml
+          echo "Performing action on release with time difference greater than or equal to 30 minutes."     
+      
+    build-apk:
+      needs: check-release
+      uses: ./.github/workflows/build-artifact.yml
+      with:
+        COMMIT_CHANGELOG: ${{ inputs.COMMIT_CHANGELOG }}
+        DEBUG_ENABLED: ${{ inputs.DEBUG_ENABLED }}
+      secrets:
+        ENVS: ${{ secrets.ENVS }}
+        REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
