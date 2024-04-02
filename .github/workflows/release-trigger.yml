@@ -14,18 +14,21 @@ jobs:
 
       - name: Get latest release
         id: get_release
+        shell: bash
         run: |
           latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.tag_name')
           echo "tag=$latest_release" >> $GITHUB_OUTPUT
 
       - name: Compare with previous release
         id: compare_release
+        shell: bash
         run: |
           previous_release=$(git describe --abbrev=0 --tags)
           echo "previous_tag=$previous_release" >> $GITHUB_OUTPUT
 
       - name: Logging if new release
         if: ${{ steps.compare_release.outputs.tag != steps.get_release.outputs.tag }}
+        shell: bash
         run: |
           echo "New release detected: ${{ steps.get_release.outputs.tag }}"
           # 여기에 작업을 추가합니다.
