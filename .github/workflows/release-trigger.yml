@@ -16,13 +16,13 @@ jobs:
         id: get_release
         run: |
           latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.tag_name')
-          echo "::set-output name=tag::$latest_release"
+          echo "tag=$latest_release" >> $GITHUB_OUTPUT
 
       - name: Compare with previous release
         id: compare_release
         run: |
           previous_release=$(git describe --abbrev=0 --tags)
-          echo "::set-output name=previous_tag::$previous_release"
+          echo "previous_tag=$previous_release" >> $GITHUB_OUTPUT
 
       - name: Logging if new release
         if: ${{ steps.compare_release.outputs.tag != steps.get_release.outputs.tag }}
