@@ -1,40 +1,47 @@
-name: Trigger on New Release
+name: Check for Latest Release
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/5 * * * *'  # 매일 00:00에 실행하도록 예약
+    - cron: '*/30 * * * *'  # 매 30분마다 실행
 
 jobs:
-  check-new-release:
+  check-release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Get current time
-        id: current_time
-        run: echo "time=$(date -u +%FT%TZ)" >> $GITHUB_OUTPUT
-        
-      - name: Get latest release
-        id: get_release
-        shell: bash
-        run: |
-          latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.published_at')
-          echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
-
-      - name: Compare times
-        id: compare_times
-        run: |
-          current_time=$(date -d "${{ steps.current_time.outputs.time }}" +%s)
-          latest_release=$(date -d "${{ steps.get_release.outputs.latest_release }}" +%s)
-          time_diff=$((current_time - latest_release))
-          echo "time_diff=$time_diff" >> $GITHUB_OUTPUT
-
-      - name: Run if within 5 minutes
-        if: ${{ steps.compare_times.outputs.time_diff }} <= 300
-        shell: bash
-        run: |
-          echo "New release detected: ${{ steps.get_release.outputs.tag }}"
-          # 여기에 작업을 추가합니다.
-
-      - name: Trigger workflow if new release
-        if: ${{ steps.compare_times.outputs.time_diff }} <= 300
-        uses: ./.github/workflows/build-apk.yml
+    - name: Get latest release
+      id: latest_release
+      run: |
+        latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.created_at')
+        echo "::set-output name=latest_release::$latest_release"
+      
+    - name: Calculate time difference
+      id: time_difference
+      run: |
+        latest_release=${{ steps.latest_release.outputs.latest_release }}
+        current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        latest_release_time=$(date -d "$latest_release" -u +"%s")
+        current_time=$(date -d "$current_time" -u +"%s")
+        difference=$((current_time - latest_release_time))
+        echo "::set-output name=difference::$difference"
+      
+    - name: Check time difference
+      id: check_time
+      run: |
+        difference=${{ steps.time_difference.outputs.difference }}
+        threshold=$((30 * 60)) # 30 minutes in seconds
+        if [ $difference -ge $threshold ]; then
+          echo "Time difference is greater than or equal to 30 minutes."
+          exit 0
+        else
+          echo "Time difference is less than 30 minutes."
+          exit 1
+        fi
+      
+    - name: Perform action on release
+      if: ${{ success() }}
+      run: |
+        # 여기에 실행할 작업을 추가하세요.
+        # 예를 들어, 30분 이상 차이가 있을 때 실행되어야 하는 작업을 여기에 추가할 수 있습니다.
+        echo "Performing action on release with time difference greater than or equal to 30 minutes."
