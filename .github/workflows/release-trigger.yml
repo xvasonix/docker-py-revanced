@@ -32,4 +32,4 @@ jobs:
 
       - name: Trigger workflow if new release
         if: ${{ steps.compare_release.outputs.tag != steps.get_release.outputs.tag }}
-        uses: actions/build-apk@main
+        uses: ./.github/workflows/build-apk.yml
