@@ -78,11 +78,11 @@ jobs:
           echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H.%M.%S")" >> $GITHUB_OUTPUT
           curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md
 
-      - name: Delete Older Releases
-        uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_PATTERN: "Build*"
+      #- name: Delete Older Releases
+        #uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
+        #with:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #RELEASE_PATTERN: "Build*"
 
       - name: Upload Build Artifact
         uses: ncipollo/release-action@main
