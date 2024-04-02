@@ -23,7 +23,7 @@ jobs:
         id: compare_release
         shell: bash
         run: |
-          previous_release=$(git describe --abbrev=0 --tags)
+          previous_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases | jq -r '.[1].tag_name')
           echo "previous_tag=$previous_release" >> $GITHUB_OUTPUT
 
       - name: Logging if new release
