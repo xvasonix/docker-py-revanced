@@ -101,3 +101,40 @@ jobs:
       secrets:
         ENVS: ${{ secrets.ENVS }}
         REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+
+
+    upload-to-github:
+      name: GitHub Upload
+      runs-on: ubuntu-latest
+      timeout-minutes: 30
+      needs: build-apk
+      if: inputs.GITHUB_UPLOAD
+
+      steps:
+        - name: Download Already Built APKs
+          uses: actions/download-artifact@main
+          with:
+            name: Built-APKs
+        - name: Get Date
+          id: get-date
+          run: |
+            echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H.%M.%S")" >> $GITHUB_OUTPUT
+            curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md
+
+      #- name: Delete Older Releases
+        #uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
+        #with:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #RELEASE_PATTERN: "Build*"
+
+        - name: Upload Build Artifact
+          uses: ncipollo/release-action@main
+          with:
+            artifacts: "*-output.apk"
+            token: ${{ secrets.GITHUB_TOKEN }}
+            tag: Build_${{ steps.get-date.outputs.date }}
+            artifactErrorsFailBuild: true
+
+        - name: Sleep for 10 seconds
+          run: |
+            sleep 10
