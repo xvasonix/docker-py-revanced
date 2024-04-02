@@ -2,7 +2,7 @@ name: Trigger on New Release
 
 on:
   schedule:
-    - cron: '1/* * * * *'  # 매일 00:00에 실행하도록 예약
+    - cron: '*/1 * * * *'  # 매일 00:00에 실행하도록 예약
 
 jobs:
   check-new-release:
