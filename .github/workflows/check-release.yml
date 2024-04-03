@@ -4,7 +4,7 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
 on:
   schedule:
-    - cron: "*/10 * * * *" # 정각마다 실행
+    - cron: "0 * * * *" # 정각마다 실행
   workflow_dispatch:
     inputs:
       GITHUB_UPLOAD:
@@ -61,10 +61,10 @@ jobs:
           threshold=$((1 * 60 * 60)) # 1 시간 in seconds
           if [ $difference -lt $threshold ]; then
             echo "Time difference is less than 1 hour."
-            exit 1
+            exit 0
           else
             echo "Time difference is greater than or equal to 1 hour."
-            exit 0
+            exit 1
           fi
 
       - name: Perform action on release
