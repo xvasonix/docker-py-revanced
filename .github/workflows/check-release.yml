@@ -18,14 +18,14 @@ on:
         required: false
         type: boolean
         default: true
-      CI_TEST:
-        required: false
-        type: boolean
-        default: false
       COMMIT_CHANGELOG:
         type: boolean
         required: false
         default: true
+      CI_TEST:
+        required: false
+        type: boolean
+        default: false
       DEBUG_ENABLED:
         type: boolean
         description: "Run the build with tmate debugging enabled."
