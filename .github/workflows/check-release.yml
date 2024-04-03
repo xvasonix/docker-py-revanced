@@ -76,8 +76,8 @@ jobs:
     needs: check-release
     uses: ./.github/workflows/build-artifact.yml
     with:
-      COMMIT_CHANGELOG: ${{ inputs.COMMIT_CHANGELOG }}
-      DEBUG_ENABLED: ${{ inputs.DEBUG_ENABLED }}
+      COMMIT_CHANGELOG: ${{ inputs.COMMIT_CHANGELOG == 'true' || github.event_name == 'schedule' }}
+      DEBUG_ENABLED: ${{ inputs.DEBUG_ENABLED == 'true' || github.event_name == 'schedule' }}
     secrets:
       ENVS: ${{ secrets.ENVS }}
       REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: build-apk
-    if: inputs.GITHUB_UPLOAD
+    if: ${{ inputs.GITHUB_UPLOAD == 'true' || github.event_name == 'schedule' }}
 
     steps:
       - name: Download Already Built APKs
