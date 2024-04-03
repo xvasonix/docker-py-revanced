@@ -16,6 +16,10 @@ on:
         type: boolean
         required: false
         default: true
+      IS_MANUAL:
+        type: boolean
+        required: false
+        default: false
       CI_TEST:
         required: false
         type: boolean
@@ -68,7 +72,7 @@ jobs:
           fi
 
       - name: Perform action on release
-        if: ${{ success() }}
+        if: ${{ github.event.inputs.IS_MANUAL == 'true' || success() }}
         run: |
           echo "Performing action on release with time difference greater than or equal to setting time."
 
