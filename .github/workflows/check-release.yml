@@ -80,7 +80,7 @@ jobs:
     uses: ./.github/workflows/build-artifact.yml
     with:
       COMMIT_CHANGELOG: ${{ github.event.inputs.COMMIT_CHANGELOG == 'true' || github.event_name == 'schedule' }}
-      DEBUG_ENABLED: ${{ github.event.inputs.DEBUG_ENABLED == 'true' || github.event_name == 'schedule' }}
+      DEBUG_ENABLED: ${{ github.event.inputs.DEBUG_ENABLED == 'true' }}
     secrets:
       ENVS: ${{ secrets.ENVS }}
       REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
