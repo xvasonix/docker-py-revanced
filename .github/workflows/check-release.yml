@@ -45,8 +45,7 @@ jobs:
         id: time_difference
         run: |
           latest_release=${{ steps.latest_release.outputs.latest_release }}
-          current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")          
-          echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
+          current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")    
           echo "current_time=$current_time" >> $GITHUB_OUTPUT
           latest_release_time=$(date -d "$latest_release" -u +"%s")
           current_time=$(date -d "$current_time" -u +"%s")
@@ -57,7 +56,7 @@ jobs:
         id: check_time
         run: |
           current_time=${{ steps.time_difference.outputs.current_time }}
-          latest_release_time=${{ steps.time_difference.outputs.latest_release_time }}
+          latest_release_time=${{ steps.latest_release.outputs.latest_release }}
           difference=${{ steps.time_difference.outputs.difference }}
           threshold=$((1 * 60 * 60)) # 1 시간 in seconds
           if [ $difference -lt $threshold ]; then
