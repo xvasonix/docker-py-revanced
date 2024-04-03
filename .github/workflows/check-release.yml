@@ -129,7 +129,9 @@ jobs:
           sleep 10
 
           
-  discord-webhook-push:
+  discord-webhook-push:  
+    name: Discord Webhook
+    needs: upload-to-github
     runs-on: ubuntu-latest
     steps:
     - name: Discord Webhook Action
