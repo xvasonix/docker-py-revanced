@@ -75,6 +75,7 @@ jobs:
           echo "Performing action on release with time difference greater than or equal to setting time."
 
   build-apk:
+    needs: check-release
     permissions: write-all
     name: APK Build
     runs-on: ubuntu-latest
