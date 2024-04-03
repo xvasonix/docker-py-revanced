@@ -1,0 +1,197 @@
+name: Check for Latest Release (TEST)
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+on:
+  schedule:
+    - cron: "0 * * * *" # 정각마다 실행
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      ENVS:
+        required: false
+      REDDIT_CLIENT_ID:
+        required: false
+    inputs:
+      CI_TEST:
+        required: false
+        type: boolean
+        default: false
+      COMMIT_CHANGELOG:
+        type: boolean
+        required: false
+        default: true
+      DEBUG_ENABLED:
+        type: boolean
+        description: "Run the build with tmate debugging enabled."
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@main
+
+      - name: Get latest release
+        id: latest_release
+        run: |
+          latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.created_at')
+          echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
+
+      - name: Calculate time difference
+        id: time_difference
+        run: |
+          latest_release=${{ steps.latest_release.outputs.latest_release }}
+          current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          latest_release_time=$(date -d "$latest_release" -u +"%s")
+          current_time=$(date -d "$current_time" -u +"%s")
+          difference=$((current_time - latest_release_time))
+          echo "difference=$difference" >> $GITHUB_OUTPUT
+
+      - name: Check time difference
+        id: check_time
+        run: |
+          difference=${{ steps.time_difference.outputs.difference }}
+          threshold=$((1 * 60 * 60)) # 1 시간 in seconds
+          if [ $difference -lt $threshold ]; then
+            echo "Time difference is less than 1 hour."
+            exit 1
+          else
+            echo "Time difference is greater than or equal to 1 hour."
+            exit 0
+          fi
+
+      - name: Perform action on release
+        if: ${{ success() }}
+        run: |
+          echo "Performing action on release with time difference greater than or equal to setting time."
+
+  build-apk:
+    permissions: write-all
+    name: APK Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@main
+
+      - name: Update Env for custom build
+        run: |
+          echo "${{ secrets.ENVS }}" >> .env
+
+      - name: Inject Reddit Client ID
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+        if: env.REDDIT_CLIENT_ID != null
+        run: |
+          client_id="${REDDIT_CLIENT_ID}"
+          path="apks/options.json"
+          json_data=$(cat "${path}")
+
+          new_object='{
+          "patchName": "Spoof client",
+          "options": [
+            {
+              "key": "client-id",
+              "value": "'${client_id}'"
+            }
+          ]
+          }'
+          # Check if an object with the patchName "Spoof client" already exists
+          existing_object_index=$(echo "${json_data}" | jq 'map(.patchName) | index("Spoof client")')
+          echo "${existing_object_index}"
+          if [[ ${existing_object_index} != "null" ]]; then
+            echo "Patch entry already exists. Overriding client ID in it."
+            updated_json=$(echo "${json_data}" | jq ".[${existing_object_index}].options[0].value = \"${client_id}\"")
+          else
+            echo "Patch entry doesn't exists. Adding new entry."
+            updated_json=$(echo "${json_data}" | jq ". += [${new_object}]")
+          fi
+          echo "${updated_json}" > "${path}"
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@master
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.DEBUG_ENABLED }}
+        with:
+          detached: true
+
+      - name: Build Revanced APKs
+        if: ${{ true && !inputs.DEBUG_ENABLED }}
+        run: |
+          if [[ "${{ inputs.CI_TEST }}" =~ ^(true|True|1)$ ]]; then
+              echo "In CI Testing. Using local compose file."
+              docker-compose -f docker-compose-local.yml up --build
+          else
+              echo "Using Prod compose file."
+              docker-compose up --build
+          fi
+      - name: Upload Build APKS
+        uses: actions/upload-artifact@main
+        if: ${{ true && !inputs.DEBUG_ENABLED }}
+        with:
+          name: Built-APKs
+          path: |
+            apks/*-output.apk
+            apks/VancedMicroG.apk"
+          if-no-files-found: error
+
+      - name: Commit Update file
+        if: ${{ inputs.COMMIT_CHANGELOG }}
+        uses: stefanzweifel/git-auto-commit-action@master
+        with:
+          branch: changelogs
+          skip_checkout: true
+          file_pattern: changelog.md
+          commit_message: 🚀New Build
+          push_options: "--force"
+
+  upload-to-github:
+    name: GitHub Upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-apk
+    if: inputs.GITHUB_UPLOAD
+
+    steps:
+      - name: Download Already Built APKs
+        uses: actions/download-artifact@main
+        with:
+          name: Built-APKs
+      - name: Get Date
+        id: get-date
+        run: |
+          latest_release_version=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.tag_name')
+          echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
+          latest_release_body=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.body')
+          echo "latest_release_body=$latest_release_body" >> $GITHUB_OUTPUT
+          echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H.%M.%S")" >> $GITHUB_OUTPUT
+          curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md
+
+
+      #- name: Delete Older Releases
+        #uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
+        #with:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #RELEASE_PATTERN: "Build*"
+
+      - name: Upload Build Artifact
+        uses: ncipollo/release-action@main
+        with:
+          artifacts: "*-output.apk"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: Build_${{ steps.get-date.outputs.date }}_${{ steps.get-date.outputs.latest_release_version }}
+          body: ${{ steps.get-date.outputs.latest_release_body }}
+          artifactErrorsFailBuild: true
+
+      - name: Sleep for 10 seconds
+        run: |
+          sleep 10
