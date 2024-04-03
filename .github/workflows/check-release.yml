@@ -143,9 +143,9 @@ jobs:
     - name: Webdav Push Action
       uses: bxb100/action-upload-webdav@v1
       with:
-        webdav_address: ${{ secrets.webdav_address }}
-        webdav_username: ${{ secrets.webdav_username }}
-        webdav_password: ${{ secrets.webdav_password }}
+        webdav_address: ${{ secrets.WEBDAV_ADDRESS }}
+        webdav_username: ${{ secrets.WEBDAV_USERNAME }}
+        webdav_password: ${{ secrets.WEBDAV_PASSWORD }}
         webdav_upload_path: "/data/자료모음/앱모음/Youtube"
         files: "./*-output.apk"
           
