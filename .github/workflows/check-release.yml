@@ -136,7 +136,7 @@ jobs:
 
   webdav-push:  
     name: Webdav Push
-    needs: upload-to-github
+    needs: build-apk
     runs-on: ubuntu-latest
     steps:
     
