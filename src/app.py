@@ -85,11 +85,16 @@ class APP(object):
         url = "https://api.github.com/repos/anddea/revanced-patches/releases/latest"
         response = requests.get(url)
         data = response.json()
-        tag_name = data["tag_name"]
+        cli_tag_name = data["tag_name"]        
+        
+        url = "https://api.github.com/repos/revanced/revanced-cli/releases/latest"
+        response = requests.get(url)
+        data = response.json()
+        patches_tag_name = data["tag_name"]
         
         current_date = datetime.now(timezone("Asia/Seoul"))
         formatted_date = current_date.strftime("%Y%b%d_%I%M%p").upper()
-        return f"{self.app_name}-{slugify(self.app_version)}-{tag_name}-output.apk"
+        return f"{self.app_name}-v{slugify(self.app_version)}-cli_{cli_tag_name}-patches_{tag_name}-output.apk"
 
     def __str__(self: "APP") -> str:
         """Returns the str representation of the app."""
