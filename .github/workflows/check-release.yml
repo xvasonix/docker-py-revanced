@@ -34,7 +34,7 @@ jobs:
   check-release:
     runs-on: ubuntu-latest
 
-    steps:
+    steps:        
       - name: Get latest release
         id: latest_release
         run: |
@@ -68,6 +68,9 @@ jobs:
         if: ${{ success() }}
         run: |
           echo "Performing action on release with time difference greater than or equal to setting time."
+          
+      - name: checkout repo content
+        uses: actions/checkout@main          
 
   build-apk:
     needs: check-release
