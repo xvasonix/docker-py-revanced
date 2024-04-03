@@ -122,7 +122,7 @@ jobs:
       - name: Upload Build Artifact
         uses: ncipollo/release-action@main
         with:
-          artifacts: "*-output.apk"
+          #artifacts: "*-output.apk"
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Build_${{ steps.get-date.outputs.date }}
           tag: ${{ steps.get-date.outputs.latest_release_version }}
@@ -136,7 +136,7 @@ jobs:
 
   webdav-push:  
     name: Webdav Push
-    needs: build-apk
+    needs: upload-to-github
     runs-on: ubuntu-latest
     steps:
     
