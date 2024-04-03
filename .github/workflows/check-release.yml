@@ -58,6 +58,7 @@ jobs:
 
       - name: Check time difference
         id: check_time
+        if: ${{ github.event.inputs.IS_MANUAL == 'false' || github.event_name == 'schedule' }}
         run: |
           current_time=${{ steps.time_difference.outputs.current_time }}
           latest_release_time=${{ steps.latest_release.outputs.latest_release }}
@@ -72,7 +73,7 @@ jobs:
           fi
 
       - name: Perform action on release
-        if: ${{ github.event.inputs.IS_MANUAL == 'true' || success() }}
+        if: ${{ success() }}
         run: |
           echo "Performing action on release with time difference greater than or equal to setting time."
 
