@@ -1,4 +1,4 @@
-name: Check for Latest Release (TEST)
+name: Check for Latest Release
 env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
@@ -102,7 +102,7 @@ jobs:
           latest_release_body=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.body')
           #echo "latest_release_body=$latest_release_body" >> $GITHUB_OUTPUT
           echo "$latest_release_body" > body.md
-          echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H.%M.%S")" >> $GITHUB_OUTPUT
+          echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H:%M:%S")" >> $GITHUB_OUTPUT
           curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md         
 
 
@@ -117,8 +117,8 @@ jobs:
         with:
           artifacts: "*-output.apk"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: Build_${{ steps.get-date.outputs.date }}_${{ steps.get-date.outputs.latest_release_version }}
-          #body: ${{ steps.get-date.outputs.latest_release_body }}
+          name: Build_${{ steps.get-date.outputs.date }}
+          tag: ${{ steps.get-date.outputs.latest_release_version }}
           bodyFile: "body.md"
           artifactErrorsFailBuild: true
 
