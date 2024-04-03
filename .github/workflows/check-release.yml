@@ -128,14 +128,34 @@ jobs:
         run: |
           sleep 10
 
+
+  webdav-push:  
+    name: Webdav Push
+    needs: upload-to-github
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Download Already Built APKs
+      uses: actions/download-artifact@main
+      with:
+        name: Built-APKs
+        
+    - name: Webdav Push Action
+      uses: bxb100/action-upload-webdav@v1
+      with:
+        webdav_address: ${{ secrets.webdav_address }}
+        webdav_username: ${{ secrets.webdav_username }}
+        webdav_password: ${{ secrets.webdav_password }}
+        webdav_upload_path: "/data/자료모음/앱모음/Youtube"
+        files: "./*-output.apk"
           
   discord-webhook-push:  
     name: Discord Webhook
-    needs: upload-to-github
+    needs: webdav-push
     runs-on: ubuntu-latest
     steps:
     - name: Discord Webhook Action
       uses: tsickert/discord-webhook@v5.3.0
       with:
         webhook-url: ${{ secrets.WEBHOOK_URL }}
-        content: New youtube build release.
+        content: New youtube build release and upload to webdav.
