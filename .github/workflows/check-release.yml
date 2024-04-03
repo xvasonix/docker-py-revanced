@@ -98,9 +98,8 @@ jobs:
         id: get-date
         run: |
           latest_release_version=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.tag_name')
-          echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
+          echo "latest_release_version=$latest_release_version" >> $GITHUB_OUTPUT
           latest_release_body=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.body')
-          #echo "latest_release_body=$latest_release_body" >> $GITHUB_OUTPUT
           echo "$latest_release_body" > body.md
           echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H:%M:%S")" >> $GITHUB_OUTPUT
           curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md         
