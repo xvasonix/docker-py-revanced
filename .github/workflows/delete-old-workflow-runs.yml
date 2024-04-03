@@ -12,7 +12,7 @@ on:
       minimum_runs:
         description: 'Minimum runs to keep for each workflow'
         required: true
-        default: '6'
+        default: '5'
       delete_workflow_pattern:
         description: 'Name or filename of the workflow (if not set, all workflows are targeted)'
         required: false
@@ -30,7 +30,7 @@ on:
       delete_run_by_conclusion_pattern:
         description: 'Remove runs based on conclusion: action_required, cancelled, failure, skipped, success'
         required: true
-        default: "ALL"
+        default: "Unsuccessful: action_required,cancelled,failure,skipped"
         type: choice
         options:
           - "ALL"
