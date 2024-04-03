@@ -7,7 +7,6 @@ on:
   schedule:
     - cron: "0 * * * *" # 정각마다 실행
   workflow_dispatch:
-  workflow_call:
     secrets:
       ENVS:
         required: false
@@ -77,85 +76,13 @@ jobs:
           echo "Performing action on release with time difference greater than or equal to setting time."
 
   build-apk:
-    needs: check-release
-    permissions: write-all
-    name: APK Build
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@main
-
-      - name: Update Env for custom build
-        run: |
-          echo "${{ secrets.ENVS }}" >> .env
-
-      - name: Inject Reddit Client ID
-        env:
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-        if: env.REDDIT_CLIENT_ID != null
-        run: |
-          client_id="${REDDIT_CLIENT_ID}"
-          path="apks/options.json"
-          json_data=$(cat "${path}")
-
-          new_object='{
-          "patchName": "Spoof client",
-          "options": [
-            {
-              "key": "client-id",
-              "value": "'${client_id}'"
-            }
-          ]
-          }'
-          # Check if an object with the patchName "Spoof client" already exists
-          existing_object_index=$(echo "${json_data}" | jq 'map(.patchName) | index("Spoof client")')
-          echo "${existing_object_index}"
-          if [[ ${existing_object_index} != "null" ]]; then
-            echo "Patch entry already exists. Overriding client ID in it."
-            updated_json=$(echo "${json_data}" | jq ".[${existing_object_index}].options[0].value = \"${client_id}\"")
-          else
-            echo "Patch entry doesn't exists. Adding new entry."
-            updated_json=$(echo "${json_data}" | jq ". += [${new_object}]")
-          fi
-          echo "${updated_json}" > "${path}"
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@master
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.DEBUG_ENABLED }}
-        with:
-          detached: true
-
-      - name: Build Revanced APKs
-        if: ${{ true && !inputs.DEBUG_ENABLED }}
-        run: |
-          if [[ "${{ inputs.CI_TEST }}" =~ ^(true|True|1)$ ]]; then
-              echo "In CI Testing. Using local compose file."
-              docker-compose -f docker-compose-local.yml up --build
-          else
-              echo "Using Prod compose file."
-              docker-compose up --build
-          fi
-      - name: Upload Build APKS
-        uses: actions/upload-artifact@main
-        if: ${{ true && !inputs.DEBUG_ENABLED }}
-        with:
-          name: Built-APKs
-          path: |
-            apks/*-output.apk
-            apks/VancedMicroG.apk"
-          if-no-files-found: error
-
-      - name: Commit Update file
-        if: ${{ inputs.COMMIT_CHANGELOG }}
-        uses: stefanzweifel/git-auto-commit-action@master
-        with:
-          branch: changelogs
-          skip_checkout: true
-          file_pattern: changelog.md
-          commit_message: 🚀New Build
-          push_options: "--force"
+    uses: ./.github/workflows/build-artifact.yml
+    with:
+      COMMIT_CHANGELOG: ${{ inputs.COMMIT_CHANGELOG }}
+      DEBUG_ENABLED: ${{ inputs.DEBUG_ENABLED }}
+    secrets:
+      ENVS: ${{ secrets.ENVS }}
+      REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
 
   upload-to-github:
     name: GitHub Upload
