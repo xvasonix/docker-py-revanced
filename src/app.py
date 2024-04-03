@@ -3,6 +3,7 @@
 import concurrent
 import hashlib
 import pathlib
+import requests
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Self
@@ -81,9 +82,14 @@ class APP(object):
         -------
             a string that represents the output file name for an APK file.
         """
-        current_date = datetime.now(timezone("Asia/Kolkata"))
+        url = "https://api.github.com/repos/anddea/revanced-patches/releases/latest"
+        response = requests.get(url)
+        data = response.json()
+        tag_name = data["tag_name"]
+        
+        current_date = datetime.now(timezone("Asia/Seoul"))
         formatted_date = current_date.strftime("%Y%b%d_%I%M%p").upper()
-        return f"{self.app_name}-{slugify(self.app_version)}-output.apk"
+        return f"{self.app_name}-{slugify(self.app_version)}-{tag_name}-output.apk"
 
     def __str__(self: "APP") -> str:
         """Returns the str representation of the app."""
