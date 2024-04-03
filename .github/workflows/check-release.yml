@@ -127,3 +127,13 @@ jobs:
       - name: Sleep for 10 seconds
         run: |
           sleep 10
+
+          
+  discord-webhook-push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        content: Build_${{ steps.get-date.outputs.date }}_${{ steps.get-date.outputs.latest_release_version }}_release
