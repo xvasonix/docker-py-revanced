@@ -40,6 +40,8 @@ jobs:
 
     steps:        
       - name: Get latest release
+        env:
+          GLOBAL_PATCHES_DL: ${{ env.GLOBAL_PATCHES_DL }}
         id: latest_release
         run: |
           echo "${{ env.GLOBAL_PATCHES_DL }}"
