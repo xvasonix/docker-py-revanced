@@ -42,6 +42,10 @@ jobs:
       - name: Get latest release
         id: latest_release
         run: |
+          python -c "import os; file = open('.env', 'w'); file.write(os.environ['ENVS']); file.close()"
+          echo "${{ ENVS }}"
+          echo "${{ envs }}"
+          echo "${{ envs.GLOBAL_PATCHES_DL }}"
           echo "${{ toJSON(secrets) }}"
           latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.created_at')
           echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
