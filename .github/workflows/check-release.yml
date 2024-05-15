@@ -42,12 +42,7 @@ jobs:
       - name: Get latest release
         id: latest_release
         run: |
-          python -c "import os; file = open('.env', 'w'); file.write(os.environ['ENVS']); file.close()"
-          echo "${{ ENVS }}"
-          echo "${{ envs }}"
-          echo "${{ envs.GLOBAL_PATCHES_DL }}"
-          echo "${{ toJSON(secrets) }}"
-          latest_release=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.created_at')
+          latest_release=$(curl -s https://api.github.com/repos/inotia00/revanced-patches/releases/latest | jq -r '.created_at')
           echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
 
       - name: Calculate time difference
@@ -110,9 +105,9 @@ jobs:
       - name: Get Date
         id: get-date
         run: |
-          latest_release_version=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.tag_name')
+          latest_release_version=$(curl -s https://api.github.com/repos/inotia00/revanced-patches/releases/latest | jq -r '.tag_name')
           echo "latest_release_version=$latest_release_version" >> $GITHUB_OUTPUT
-          latest_release_body=$(curl -s https://api.github.com/repos/anddea/revanced-patches/releases/latest | jq -r '.body')
+          latest_release_body=$(curl -s https://api.github.com/repos/inotia00/revanced-patches/releases/latest | jq -r '.body')
           echo "$latest_release_body" > body.md
           echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H:%M:%S")" >> $GITHUB_OUTPUT
           curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md         
