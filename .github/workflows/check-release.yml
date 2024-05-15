@@ -1,7 +1,8 @@
 name: Check for Latest Release
 env:
   DOCKER_BUILDKIT: 1
-  COMPOSE_DOCKER_CLI_BUILD: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1  
+  URL: ${{ env.GLOBAL_PATCHES_DL }}
 on:
   schedule:
     - cron: "0 * * * *" # 정각마다 실행
@@ -41,11 +42,10 @@ jobs:
     steps:        
       - name: Get latest release
         id: latest_release
-        env:
-          URL: ${{ env.GLOBAL_PATCHES_DL }}
         run: |
           url = ${ URL }
-          latest_release=$(curl -s $url | jq -r '.created_at')
+          echo "$url"
+          latest_release=$(curl -s ${{ env.URL }} | jq -r '.created_at')
           echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
 
       - name: Calculate time difference
