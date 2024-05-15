@@ -38,7 +38,12 @@ jobs:
   check-release:
     runs-on: ubuntu-latest
 
-    steps:        
+    steps:
+
+      - name: Update Env for custom build
+        run: |
+          echo "${{ secrets.ENVS }}" >> .env
+          
       - name: Get latest release
         env:
           GLOBAL_PATCHES_DL: ${{ env.GLOBAL_PATCHES_DL }}
