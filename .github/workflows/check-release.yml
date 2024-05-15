@@ -42,7 +42,8 @@ jobs:
       - name: Get latest release
         id: latest_release
         run: |
-          latest_release=$(curl -s ${{ env.GLOBAL_PATCHES_DL }} | jq -r '.created_at')
+          url=${{ env.GLOBAL_PATCHES_DL }}
+          latest_release=$(curl -s $(url) | jq -r '.created_at')
           echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
 
       - name: Calculate time difference
