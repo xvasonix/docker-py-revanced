@@ -83,13 +83,13 @@ class APP(object):
             a string that represents the output file name for an APK file.
         """            
         
-        url = "https://api.github.com/repos/inotia00/revanced-cli/releases/latest"
-        response = requests.get(url)
+        #url = "https://api.github.com/repos/inotia00/revanced-cli/releases/latest"
+        response = requests.get(self.cli_dl)
         data = response.json()
         cli_tag_name = data["tag_name"]
         
-        url = "https://api.github.com/repos/inotia00/revanced-patches/releases/latest"
-        response = requests.get(url)
+        #url = "https://api.github.com/repos/inotia00/revanced-patches/releases/latest"
+        response = requests.get(self.patches_dl)
         data = response.json()
         patches_tag_name = data["tag_name"]
         
