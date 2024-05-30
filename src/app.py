@@ -32,9 +32,7 @@ class APP(object):
         self.app_version = config.env.str(f"{app_name}_VERSION".upper(), None)
         self.experiment = False
         self.cli_dl = config.env.str(f"{app_name}_CLI_DL".upper(), config.global_cli_dl)
-        self.cli_api_dl = config.env.str(f"{app_name}_CLI_API_DL".upper(), config.global_cli_api_dl)
         self.patches_dl = config.env.str(f"{app_name}_PATCHES_DL".upper(), config.global_patches_dl)
-        self.patches_api_dl = config.env.str(f"{app_name}_PATCHES_API_DL".upper(), config.global_patches_api_dl)
         self.integrations_dl = config.env.str(f"{app_name}_INTEGRATIONS_DL".upper(), config.global_integrations_dl)
         self.patch = config.env.str(f"{app_name}_CLI_DL".upper(), config.global_cli_dl)
         self.exclude_request: list[str] = config.env.list(f"{app_name}_EXCLUDE_PATCH".upper(), [])
@@ -86,12 +84,12 @@ class APP(object):
         """            
         
         #url = "https://api.github.com/repos/inotia00/revanced-cli/releases/latest"
-        response = requests.get(self.cli_api_dl)
+        response = requests.get(self.cli_dl.replace("github.com/", "api.github.com/repos/"))
         data = response.json()
         cli_tag_name = data["tag_name"]
         
         #url = "https://api.github.com/repos/inotia00/revanced-patches/releases/latest"
-        response = requests.get(self.patches_api_dl)
+        response = requests.get(self.patches_dl.replace("github.com/", "api.github.com/repos/"))
         data = response.json()
         patches_tag_name = data["tag_name"]
         
