@@ -13,16 +13,42 @@
     ]
   },
   {
-    "patchName": "Custom branding icon YouTube",
+    "patchName": "Toolbar components",
     "options": [
       {
-        "key": "AppIcon",
-        "value": "Revancify Red"
+        "key": "ForceHideVoiceSearchButton",
+        "value": false
       }
     ]
   },
   {
-    "patchName": "Custom branding name YouTube",
+    "patchName": "Custom Shorts action buttons",
+    "options": [
+      {
+        "key": "IconType",
+        "value": "round"
+      }
+    ]
+  },
+  {
+    "patchName": "Custom branding icon for YouTube",
+    "options": [
+      {
+        "key": "AppIcon",
+        "value": "revancify_red"
+      },
+      {
+        "key": "ChangeSplashIcon",
+        "value": true
+      },
+      {
+        "key": "RestoreOldSplashAnimation",
+        "value": false
+      }
+    ]
+  },
+  {
+    "patchName": "Custom branding name for YouTube",
     "options": [
       {
         "key": "AppName",
@@ -40,15 +66,6 @@
     ]
   },
   {
-    "patchName": "Premium heading",
-    "options": [
-      {
-        "key": "UsePremiumHeading",
-        "value": true
-      }
-    ]
-  },
-  {
     "patchName": "Theme",
     "options": [
       {
@@ -62,11 +79,45 @@
     ]
   },
   {
+    "patchName": "Translations for YouTube",
+    "options": [
+      {
+        "key": "CustomTranslations",
+        "value": ""
+      },
+      {
+        "key": "SelectedTranslations",
+        "value": "ar, el-rGR, es-rES, fr-rFR, hu-rHU, it-rIT, ja-rJP, ko-rKR, pl-rPL, pt-rBR, ru-rRU, tr-rTR, uk-rUA, vi-rVN, zh-rCN, zh-rTW"
+      },
+      {
+        "key": "SelectedStringResources",
+        "value": "af, am, ar, ar-rXB, as, az, b+es+419, b+sr+Latn, be, bg, bn, bs, ca, cs, da, de, el, en-rAU, en-rCA, en-rGB, en-rIN, en-rXA, en-rXC, es, es-rUS, et, eu, fa, fi, fr, fr-rCA, gl, gu, hi, hr, hu, hy, id, in, is, it, iw, ja, ka, kk, km, kn, ko, ky, lo, lt, lv, mk, ml, mn, mr, ms, my, nb, ne, nl, no, or, pa, pl, pt, pt-rBR, pt-rPT, ro, ru, si, sk, sl, sq, sr, sv, sw, ta, te, th, tl, tr, uk, ur, uz, vi, zh, zh-rCN, zh-rHK, zh-rTW, zu"
+      }
+    ]
+  },
+  {
     "patchName": "Overlay buttons",
     "options": [
       {
-        "key": "OutlineIcon",
-        "value": false
+        "key": "IconType",
+        "value": "bold"
+      },
+      {
+        "key": "BottomMargin",
+        "value": "0.0dip"
+      }
+    ]
+  },
+  {
+    "patchName": "Settings for YouTube",
+    "options": [
+      {
+        "key": "InsertPosition",
+        "value": "@string/about_key"
+      },
+      {
+        "key": "RVXSettingsMenuName",
+        "value": "ReVanced Extended"
       }
     ]
   },
