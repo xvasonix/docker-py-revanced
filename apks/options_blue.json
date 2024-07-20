@@ -1,17 +1,20 @@
 [
   {
-    "patchName": "Custom package name",
-    "options": [
-      {
-        "key": "PackageNameYouTube",
-        "value": "app.blue.android.youtube"
-      },
-      {
-        "key": "PackageNameYouTubeMusic",
-        "value": "app.blue.android.apps.youtube.music"
-      }
-    ]
-  },
+  "patchName" : "GmsCore support",
+  "options" : [ {
+    "key" : "GmsCoreVendorGroupId",
+    "value" : "app.revanced"
+  }, {
+    "key" : "CheckGmsCore",
+    "value" : true
+  }, {
+    "key" : "PackageNameYouTube",
+    "value" : "app.blue.android.youtube"
+  }, {
+    "key" : "PackageNameYouTubeMusic",
+    "value" : "app.blue.android.apps.youtube.music"
+  } ]
+},
   {
     "patchName": "Toolbar components",
     "options": [
