@@ -72,6 +72,9 @@ class Patches(object):
         "com.tumblr": "tumblr",
         "com.myfitnesspal.android": "fitnesspal",
         "com.facebook.katana": "facebook",
+        "io.syncapps.lemmy_sync": "lemmy-sync",
+        "com.xiaomi.wearable": "xiaomi-wearable",
+        "com.google.android.apps.photos": "photos",
     }
 
     @staticmethod
@@ -116,7 +119,8 @@ class Patches(object):
         """
         self.patches_dict[app.app_name] = []
         patch_loader = PatchLoader()
-        patches = patch_loader.load_patches(f'{config.temp_folder}/{app.resource["patches_json"]}')
+        patches_file = app.resource["patches_json"]["file_name"]
+        patches = patch_loader.load_patches(f"{config.temp_folder}/{patches_file}")
 
         for patch in patches:
             if not patch["compatiblePackages"]:

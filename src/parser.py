@@ -164,7 +164,7 @@ class Parser(object):
             The `app` parameter is an instance of the `APP` class. It represents an application that needs
         to be patched.
         """
-        is_new, version = self.is_new_cli(self.config.temp_folder.joinpath(app.resource["cli"]))
+        is_new, version = self.is_new_cli(self.config.temp_folder.joinpath(app.resource["cli"]["file_name"]))
         if is_new:
             apk_arg = self.NEW_APK_ARG
             exp = "--force"
@@ -173,19 +173,19 @@ class Parser(object):
             exp = "--experimental"
         args = [
             self.CLI_JAR,
-            app.resource["cli"],
+            app.resource["cli"]["file_name"],
             apk_arg,
             app.download_file_name,
             self.PATCHES_ARG,
-            app.resource["patches"],
+            app.resource["patches"]["file_name"],
             self.INTEGRATIONS_ARG,
-            app.resource["integrations"],
+            app.resource["integrations"]["file_name"],
             self.OUTPUT_ARG,
             app.get_output_file_name(),
             self.KEYSTORE_ARG,
             app.keystore_name,
             self.OPTIONS_ARG,
-            app.options_name,
+            app.options_file,
         ]
         if app.experiment:
             logger.debug("Using experimental features")
@@ -193,8 +193,11 @@ class Parser(object):
         args[1::2] = map(self.config.temp_folder.joinpath, args[1::2])
         if app.old_key and "v4" in version:
             # https://github.com/ReVanced/revanced-cli/issues/272#issuecomment-1740587534
-            #old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced", "-i", "Change player flyout panel toggles", "-i", "Custom branding heading", "-i", "Custom branding icon YouTube", "-i", "Custom branding name YouTube", "-i", "Hide animated button background", "-i", "Hide double tap to like animations", "-i", "Hide fullscreen button", "-i", "Hide player buttons background", "-i", "Hide player chapters", "-i", "Hide voice search button", "-i", "MaterialYou", "-i", "Settings icons"]
-            old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced"]
+            old_key_flags = [
+                "--keystore-entry-alias=alias",
+                "--keystore-entry-password=ReVanced",
+                "--keystore-password=ReVanced",
+            ]
             args.extend(old_key_flags)
         if self.config.ci_test:
             self.exclude_all_patches()
