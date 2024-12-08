@@ -1,5 +1,7 @@
 # 🤓Docker-Py-ReVanced
 
+![Docker Pulls](https://img.shields.io/docker/pulls/nikhilbadyal/docker-py-revanced)
+
 A little python script that will help you in building [Revanced](https://revanced.app/) [apps](#any-patch-apps) and sharing them anywhere.
 
 **`Note`** - If you are a root user and want magisk module (Extended). Get them [here](https://github.com/nikhilbadyal/revanced-magisk-module)
@@ -116,7 +118,6 @@ You can use any of the following methods to build.
 | [GLOBAL_PATCHES_DL*](#global-resources)                  |   DL for Patches to be used for patching apps.    | [Revanced Patches](https://github.com/revanced/revanced-patches)                                                      |
 | [GLOBAL_SPACE_FORMATTED_PATCHES*](#global-resources)     |       Whether patches are space formatted.        | True                                                                                                                  |
 | [GLOBAL_PATCHES_JSON_DL*](#global-resources)             | DL for Patches Json to be used for patching apps. | [Revanced Patches](https://github.com/revanced/revanced-patches)                                                      |
-| [GLOBAL_INTEGRATIONS_DL*](#global-resources)             | DL for Integrations to be used for patching apps. | [Revanced Integrations](https://github.com/revanced/revanced-integrations)                                            |
 | [GLOBAL_KEYSTORE_FILE_NAME*](#global-keystore-file-name) |       Key file to be used for signing apps        | [Builder's own key](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/revanced.keystore)              |
 | [GLOBAL_OLD_KEY*](#global-keystore-file-name)            | Whether key was generated with cli v4(new) or not | <br/>[Builder's v3(old) own key](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/revanced.keystore) |
 | [GLOBAL_OPTIONS_FILE*](#global-options-file)             |              Options file to be used              | [Builder's default file](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/options.json)              |
@@ -141,7 +142,6 @@ You can use any of the following methods to build.
 | [*APP_NAME*_PATCHES_DL](#global-resources)                  |                     DL for Patches to be used for patching **APP_NAME**.                     | GLOBAL_PATCHES_DL              |
 | [*APP_NAME*_PATCHES_JSON_DL](#global-resources)             |                  DL for Patches Json to be used for patching **APP_NAME**.                   | GLOBAL_PATCHES_JSON_DL         |
 | [*APP_NAME*_SPACE_FORMATTED_PATCHES](#global-resources)     |                     Whether patches are space formatted.   **APP_NAME**.                     | GLOBAL_SPACE_FORMATTED_PATCHES |
-| [*APP_NAME*_INTEGRATIONS_DL](#global-resources)             |                  DL for Integrations to be used for patching **APP_NAME**.                   | GLOBAL_INTEGRATIONS_DL         |
 | [*APP_NAME*_KEYSTORE_FILE_NAME](#global-keystore-file-name) |                        Key file to be used for signing **APP_NAME**.                         | GLOBAL_KEYSTORE_FILE_NAME      |
 | [*APP_NAME*_OLD_KEY](#global-keystore-file-name)            | Whether key used was generated with cli > v4(new) <br/><br/>**APP_NAME**.      <br/>   <br/> | GLOBAL_OLK_KEY                 |
 | [*APP_NAME*_ARCHS_TO_BUILD](#global-archs-to-build)         |                          Arch to keep in the patched **APP_NAME**.                           | GLOBAL_ARCHS_TO_BUILD          |
@@ -218,6 +218,13 @@ You can use any of the following methods to build.
     - [fitnesspal](https://www.apkmirror.com/apk/myfitnesspal-inc/calorie-counter-myfitnesspal/)
     - [facebook](https://www.apkmirror.com/apk/facebook-2/facebook/)
     - [lemmy-sync](https://www.apkmirror.com/apk/sync-apps-ltd/sync-for-lemmy/)
+    - [amazon](https://www.apkmirror.com/apk/amazon-mobile-llc/amazon-shopping/)
+    - [bandcamp](https://www.apkmirror.com/apk/bandcamp-inc/bandcamp/)
+    - [magazines](https://www.apkmirror.com/apk/bandcamp-inc/bandcamp/)
+    - [winrar](https://www.apkmirror.com/apk/rarlab-published-by-win-rar-gmbh/rar/)
+    - [soundcloud](https://www.apkmirror.com/apk/soundcloud/soundcloud-soundcloud/)
+    - [stocard](https://www.apkmirror.com/apk/stocard-gmbh/stocard-rewards-cards-wallet/)
+    - [willhaben](https://www.apkmirror.com/apk/willhaben/willhaben/)
 
     <br>`**` - You can also patch any other app which is **not** supported officially.To do so, you need to provide
    few more inputs to the tool which are mentioned below. These config will override the sources config from the tool.
@@ -286,8 +293,7 @@ You can use any of the following methods to build.
    ```dotenv
     GLOBAL_CLI_DL=https://github.com/revanced/revanced-cli
     GLOBAL_PATCHES_DL=https://github.com/revanced/revanced-patches
-    GLOBAL_PATCHES_JSON_DL=https://github.com/revanced/revanced-patches
-    GLOBAL_INTEGRATIONS_DL=local://integrations.apk
+    GLOBAL_PATCHES_JSON_DL=https://api.revanced.app/v4/patches/list
    ```
    Resources downloaded from envs and will be used for patching for any **APP_NAME**.
    Unless provided different resource for the individual app.<br><br>
@@ -298,8 +304,7 @@ You can use any of the following methods to build.
    ```dotenv
     YOUTUBE_CLI_DL=https://github.com/inotia00/revanced-cli
     YOUTUBE_PATCHES_DL=https://github.com/inotia00/revanced-patches
-    YOUTUBE_PATCHES_JSON_DL=https://github.com/inotia00/revanced-patches
-    YOUTUBE_INTEGRATIONS_DL=https://github.com/inotia00/revanced-integrations
+    YOUTUBE_PATCHES_JSON_DL=https://api.revanced.app/v4/patches/list
    ```
    With the config tool will try to patch YouTube with resources from inotia00 while other global resource will used
    for patching other apps.<br>
@@ -376,7 +381,7 @@ You can use any of the following methods to build.
     ```
     Example:
     ```dotenv
-     EXTRA_FILES=https://github.com/inotia00/mMicroG/releases/latest@mmicrog.apk,https://github.com/revanced/revanced-integrations@integrations.apk
+     EXTRA_FILES=https://github.com/inotia00/mMicroG/releases/latest@mmicrog.apk
     ```
 12. <a id="custom-exclude-patching"></a>If you want to exclude any patch. Set comma separated patch in `.env` file
     or in `ENVS` in `GitHub secrets` (Recommended) in the format

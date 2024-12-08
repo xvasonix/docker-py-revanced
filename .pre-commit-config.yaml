@@ -1,9 +1,9 @@
 exclude: "^docs/|/migrations/"
-default_stages: [ commit ]
+default_stages: [ pre-commit ]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -23,7 +23,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.5.7'
+    rev: 'v0.8.1'
     hooks:
       - id: ruff
         args:
@@ -31,7 +31,7 @@ repos:
           - "--fix"
 
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
       - id: black
         args:
@@ -51,17 +51,17 @@ repos:
         args:
           - "--config=pyproject.toml"
 
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.5
-    hooks:
-      - id: docformatter
-        args:
-          - "--config=pyproject.toml"
-          - "--in-place"
+#  - repo: https://github.com/PyCQA/docformatter
+#    rev: master
+#    hooks:
+#      - id: docformatter
+#        args:
+#          - "--config=pyproject.toml"
+#          - "--in-place"
 
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.1
+    rev: v1.13.0
     hooks:
       - id: mypy
         args:
