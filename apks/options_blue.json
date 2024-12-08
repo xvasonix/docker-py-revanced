@@ -62,10 +62,10 @@
     "value" : true
   }, {
     "key" : "packageNameYouTube",
-    "value" : "app.red.android.youtube"
+    "value" : "app.blue.android.youtube"
   }, {
     "key" : "packageNameYouTubeMusic",
-    "value" : "app.red.android.apps.youtube.music"
+    "value" : "app.blue.android.apps.youtube.music"
   } ]
 }, {
   "patchName" : "Settings for YouTube Music",
@@ -101,7 +101,7 @@
   "patchName" : "Custom branding icon for YouTube",
   "options" : [ {
     "key" : "appIcon",
-    "value" : "revancify_red"
+    "value" : "revancify_blue"
   }, {
     "key" : "changeSplashIcon",
     "value" : true
@@ -194,7 +194,7 @@
     "value" : "@string/about_key"
   }, {
     "key" : "settingsLabel",
-    "value" : "ReVanced Extended"
+    "value" : "Youtube Extended"
   } ]
 }, {
   "patchName" : "SponsorBlock",
