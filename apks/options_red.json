@@ -11,7 +11,7 @@
   "patchName" : "Custom branding icon for YouTube Music",
   "options" : [ {
     "key" : "appIcon",
-    "value" : "revancify_blue"
+    "value" : "revancify_red"
   }, {
     "key" : "changeSplashIcon",
     "value" : true
@@ -194,7 +194,7 @@
     "value" : "@string/about_key"
   }, {
     "key" : "settingsLabel",
-    "value" : "ReVanced Extended"
+    "value" : "Youtube Extended"
   } ]
 }, {
   "patchName" : "SponsorBlock",
