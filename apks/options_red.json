@@ -113,7 +113,7 @@
   "patchName" : "Custom branding name for YouTube",
   "options" : [ {
     "key" : "appName",
-    "value": "YouTube Extended"
+    "value" : "YouTube Extended"
   } ]
 }, {
   "patchName" : "Custom double tap length",
@@ -194,7 +194,7 @@
     "value" : "@string/about_key"
   }, {
     "key" : "settingsLabel",
-    "value" : "Youtube Extended"
+    "value" : "YouTube Extended"
   } ]
 }, {
   "patchName" : "SponsorBlock",
