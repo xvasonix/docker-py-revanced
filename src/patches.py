@@ -136,11 +136,11 @@ class Patches(object):
                 p["version"] = "all"
                 self.patches_dict["universal_patch"].append(p)
             else:
-                for compatible_package, versions in patch["compatiblePackages"].items():
+                for compatible_package, version in [(x["name"], x["versions"]) for x in patch["compatiblePackages"]]:
                     if app.package_name == compatible_package:
                         p = {x: patch[x] for x in ["name", "description", "use"]}
                         p["app"] = compatible_package
-                        p["version"] = versions[-1] if versions else "all"
+                        p["version"] = version[-1] if version else "all"
                         self.patches_dict[app.app_name].append(p)
 
         app.no_of_patches = len(self.patches_dict[app.app_name])
