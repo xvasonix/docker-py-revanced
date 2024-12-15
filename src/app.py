@@ -162,7 +162,7 @@ class APP(object):
         download_tasks = [
             ("cli", self.cli_dl, config, ".*jar"),
             ("patches", self.patches_dl, config, ".*rvp"),
-            ("patches_json", self.patches_json_dl, config, ".*"),
+            ("patches_json", self.patches_json_dl, config, ".*json"),
         ]
 
         # Using a ThreadPoolExecutor for parallelism
