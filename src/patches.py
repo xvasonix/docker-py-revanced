@@ -135,7 +135,7 @@ class Patches(object):
                 p["app"] = "universal"
                 p["version"] = "all"
                 self.patches_dict["universal_patch"].append(p)
-           else:
+            else:
                 for compatible_package, versions in patch["compatiblePackages"].items():
                     if app.package_name == compatible_package:
                         p = {x: patch[x] for x in ["name", "description", "use"]}
