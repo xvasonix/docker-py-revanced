@@ -1,1 +1,92 @@
-{}
+{
+    "youtube_extended_red_inotia00": {
+        "app_version": "19.44.39",
+        "patches_version": "v5.4.1",
+        "cli_version": "v5.0.1",
+        "patches_json_version": "latest",
+        "ms_epoch_since_patched": 1739436253016,
+        "date_patched": "2025-02-13 08:44:13.015556+05:30",
+        "app_dump": {
+            "app_name": "youtube_extended_red_inotia00",
+            "app_version": "19.44.39",
+            "experiment": true,
+            "cli_dl": "https://github.com/inotia00/revanced-cli/releases/latest",
+            "patches_dl": "https://github.com/inotia00/revanced-patches/releases/latest",
+            "patches_json_dl": "https://api.revanced.app/v4/patches/list",
+            "exclude_request": [
+                "enable-debug-logging"
+            ],
+            "include_request": [],
+            "resource": {
+                "cli": {
+                    "file_name": "0d2a23fb9ef1e59c91f16f35dac65a9b5f7032dae471da0de6dd23b57b3b2f0a.jar",
+                    "version": "v5.0.1"
+                },
+                "patches": {
+                    "file_name": "0b813dcb3a4201007e5d83c9c7e9dbf9bd9ea076b487ab2f378229556e97ba2a.rvp",
+                    "version": "v5.4.1"
+                },
+                "patches_json": {
+                    "file_name": "4d98baf8fea2d01a3d0b0a3a03d577a870058e4466d1b1e690cc9a195e3890ff",
+                    "version": "latest"
+                }
+            },
+            "no_of_patches": 61,
+            "keystore_name": "extended.keystore",
+            "archs_to_build": [],
+            "options_file": "options_red.json",
+            "download_file_name": "youtube_extended_red_inotia00.apk",
+            "download_dl": "https://www.apkmirror.com/wp-content/themes/APKMirror/download.php?id=7940257&key=e3eeb83bb80d997fee13ea3780a9424e29c3d06a&forcebaseapk=true",
+            "download_source": "https://www.apkmirror.com/apk/google-inc/youtube/",
+            "package_name": "com.google.android.youtube",
+            "old_key": true,
+            "space_formatted": true,
+            "options_name": "options_red.json"
+        }
+    },
+    "youtube_extended_blue_inotia00": {
+        "app_version": "19.44.39",
+        "patches_version": "v5.4.1",
+        "cli_version": "v5.0.1",
+        "patches_json_version": "latest",
+        "ms_epoch_since_patched": 1739436318508,
+        "date_patched": "2025-02-13 08:45:18.507867+05:30",
+        "app_dump": {
+            "app_name": "youtube_extended_blue_inotia00",
+            "app_version": "19.44.39",
+            "experiment": true,
+            "cli_dl": "https://github.com/inotia00/revanced-cli/releases/latest",
+            "patches_dl": "https://github.com/inotia00/revanced-patches/releases/latest",
+            "patches_json_dl": "https://api.revanced.app/v4/patches/list",
+            "exclude_request": [
+                "enable-debug-logging"
+            ],
+            "include_request": [],
+            "resource": {
+                "cli": {
+                    "file_name": "0d2a23fb9ef1e59c91f16f35dac65a9b5f7032dae471da0de6dd23b57b3b2f0a.jar",
+                    "version": "v5.0.1"
+                },
+                "patches": {
+                    "file_name": "0b813dcb3a4201007e5d83c9c7e9dbf9bd9ea076b487ab2f378229556e97ba2a.rvp",
+                    "version": "v5.4.1"
+                },
+                "patches_json": {
+                    "file_name": "4d98baf8fea2d01a3d0b0a3a03d577a870058e4466d1b1e690cc9a195e3890ff",
+                    "version": "latest"
+                }
+            },
+            "no_of_patches": 61,
+            "keystore_name": "extended.keystore",
+            "archs_to_build": [],
+            "options_file": "options_blue.json",
+            "download_file_name": "youtube_extended_blue_inotia00.apk",
+            "download_dl": "https://www.apkmirror.com/wp-content/themes/APKMirror/download.php?id=7940257&key=e3eeb83bb80d997fee13ea3780a9424e29c3d06a&forcebaseapk=true",
+            "download_source": "https://www.apkmirror.com/apk/google-inc/youtube/",
+            "package_name": "com.google.android.youtube",
+            "old_key": true,
+            "space_formatted": true,
+            "options_name": "options_blue.json"
+        }
+    }
+}
