@@ -1,1 +1,26 @@
-{}
+{
+    "ReVanced/GmsCore": {
+        "ResourceName": "[ReVanced/GmsCore](https://github.com/ReVanced/GmsCore/releases/tag/v0.3.1.4.240913)",
+        "Version": "v0.3.1.4.240913",
+        "Changelog": "# Download\r\n\r\n| Default | Huawei |\r\n| -------- | -------- |\r\n| [Download](https://github.com/ReVanced/GmsCore/releases/download/v0.3.1.4.240913/app.revanced.android.gms-240913008-signed.apk) |  [Download](https://github.com/ReVanced/GmsCore/releases/download/v0.3.1.4.240913/app.revanced.android.gms-240913008-hw-signed.apk) |\r\n",
+        "PublishedOn": "2024-04-05T02:37:11Z"
+    },
+    "REAndroid/APKEditor": {
+        "ResourceName": "[REAndroid/APKEditor](https://github.com/REAndroid/APKEditor/releases/tag/V1.4.2)",
+        "Version": "V1.4.2",
+        "Changelog": "## What's Changed\r\n* NEW: Using internal dex library.\r\n* Full support dex files upto version 042 (_for more see help by running `java -jar APKEditor.jar d -h`_ ).\r\n* Translation into Arabic by @Kirlif in https://github.com/REAndroid/APKEditor/pull/142\r\n* Fix: Consolidate JSON Info output into a single object by @AbhiTheModder in https://github.com/REAndroid/APKEditor/pull/149\r\n\r\n## New Contributors\r\n* @AbhiTheModder made their first contribution in https://github.com/REAndroid/APKEditor/pull/149\r\n\r\n**Full Changelog**: https://github.com/REAndroid/APKEditor/compare/V1.4.1...V1.4.2",
+        "PublishedOn": "2025-01-21T20:16:10Z"
+    },
+    "inotia00/revanced-cli": {
+        "ResourceName": "[inotia00/revanced-cli](https://github.com/inotia00/revanced-cli/releases/tag/v5.0.1)",
+        "Version": "v5.0.1",
+        "Changelog": "- Based on ReVanced Cli [5.0.0](https://github.com/ReVanced/revanced-cli/tree/v5.0.0)\r\n- Added option command `options` (`options.json` file generator)\r\n- Added option command `patches` (`patches.json` file generator)\r\n- Added option command `--legacy-options` (set patch option via options.json file)\r\n- Added option command `--rip-libs` (remove native libs from apk)\r\n- Added option command `--unsigned` (disable signing of the final apk, regardless of whether it is mounted or not)\r\n- Added support anti-split (merged some [REAndroid/ARSCLib](https://github.com/REAndroid/ARSCLib) sources to implement anti-split)\r\n\r\n",
+        "PublishedOn": "2024-12-08T09:50:42Z"
+    },
+    "inotia00/revanced-patches": {
+        "ResourceName": "[inotia00/revanced-patches](https://github.com/inotia00/revanced-patches/releases/tag/v5.6.2)",
+        "Version": "v5.6.2",
+        "Changelog": "YouTube\r\n==\r\n- feat(YouTube - Disable resuming Shorts on startup): Match with ReVanced (Closes https://github.com/inotia00/ReVanced_Extended/issues/2903)\r\n- feat(YouTube - Hook download actions, Overlay buttons): Add `Add to queue and reload video` and `Remove from queue and reload video` settings, fixed a bug where the queue was unavailable under certain conditions\r\n- feat(YouTube - Settings): Add `App name`, `App version` and `Patched date` to patch information\r\n- feat(YouTube - Settings): Place RVX settings at top of settings by default https://github.com/inotia00/revanced-patches/pull/147\r\n- fix(YouTube - Custom branding icon): Splash animation background color is always white https://github.com/inotia00/ReVanced_Extended/issues/2892\r\n- fix(YouTube - Description components): `Expand video descriptions` requires longer wait time\r\n- fix(YouTube - Hook download actions, Overlay buttons): Auth key is set before the Context is initialized\r\n- fix(YouTube - Swipe controls): Patch fails on YouTube 19.43.41 when `Player components` patch is included\r\n- fix(YouTube - Video playback): Overridden to default playback speed in `onResume` callback https://github.com/inotia00/ReVanced_Extended/issues/2896\r\n\r\n\r\nReddit\r\n==\r\n- feat(Reddit): Change the latest supported version from `2025.12.0` to `2025.12.1`\r\n- fix(Reddit - Disable screenshot popup): Patch does not work in certain environments https://github.com/inotia00/ReVanced_Extended/issues/2891\r\n- fix(Reddit - Remove subreddit dialog): Can't open post from search results\r\n- fix(Reddit - Remove subreddit dialog): New type of NSFW dialog not hidden https://github.com/inotia00/ReVanced_Extended/issues/2895\r\n\r\n\r\nShared\r\n==\r\n- feat(GmsCore support): Add patch option `Patch all manifest components`\r\n\r\n\r\nAnnouncement\r\n==\r\n- **There is a change in `options.json`. If you see warnings related to patch options, remove the `options.json` file or `Patch options`.**\r\n- Compatible ReVanced Manager: [RVX Manager v1.23.5 (fork)](https://github.com/inotia00/revanced-manager/releases/tag/v1.23.5).\r\n\r\n\r\nContribute to translation\r\n==\r\n- [YouTube](https://crowdin.com/project/revancedextended)\r\n- [YT Music](https://crowdin.com/project/revancedmusicextended)",
+        "PublishedOn": "2025-04-03T01:24:56Z"
+    }
+}
