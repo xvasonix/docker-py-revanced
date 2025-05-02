@@ -3,6 +3,7 @@
 import concurrent
 import hashlib
 import pathlib
+import requests
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Self
@@ -91,10 +92,21 @@ class APP(object):
         Returns
         -------
             a string that represents the output file name for an APK file.
-        """
-        current_date = datetime.now(timezone(time_zone))
-        formatted_date = current_date.strftime("%Y%b%d.%I%M%p").upper()
-        return f"Re{self.app_name}-Version{slugify(self.app_version)}-PatchVersion{slugify(self.resource["patches"]["version"])}-{formatted_date}-output.apk"  # noqa: E501
+        """            
+        
+        #url = "https://api.github.com/repos/inotia00/revanced-cli/releases/latest"
+        response = requests.get(self.cli_dl.replace("github.com/", "api.github.com/repos/"))
+        data = response.json()
+        cli_tag_name = data["tag_name"]
+        
+        #url = "https://api.github.com/repos/inotia00/revanced-patches/releases/latest"
+        response = requests.get(self.patches_dl.replace("github.com/", "api.github.com/repos/"))
+        data = response.json()
+        patches_tag_name = data["tag_name"]
+        
+        current_date = datetime.now(timezone("Asia/Seoul"))
+        formatted_date = current_date.strftime("%Y%b%d_%I%M%p").upper()
+        return f"{self.app_name}-v{self.app_version}-cli_{cli_tag_name}-patches_{patches_tag_name}-output.apk"
 
     def __str__(self: "APP") -> str:
         """Returns the str representation of the app."""

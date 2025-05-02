@@ -1,0 +1,166 @@
+name: Check for Latest Release
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+on:
+  schedule:
+    - cron: "0 * * * *" # 정각마다 실행
+  workflow_dispatch:
+    inputs:
+      GITHUB_UPLOAD:
+        description: "Upload to GitHub"
+        required: false
+        type: boolean
+        default: true
+      COMMIT_CHANGELOG:
+        type: boolean
+        required: false
+        default: true
+      IGNORE_COMPARE_TIME:
+        type: boolean
+        required: false
+        default: false
+      CI_TEST:
+        required: false
+        type: boolean
+        default: false
+      DEBUG_ENABLED:
+        type: boolean
+        description: "Run the build with tmate debugging enabled."
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get latest release
+        id: latest_release
+        run: |
+          latest_release=$(curl -s https://api.github.com/repos/inotia00/revanced-patches/releases/latest | jq -r '.created_at')
+          echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
+
+      - name: Calculate time difference
+        id: time_difference
+        run: |
+          latest_release=${{ steps.latest_release.outputs.latest_release }}
+          current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")    
+          echo "current_time=$current_time" >> $GITHUB_OUTPUT
+          latest_release_time=$(date -d "$latest_release" -u +"%s")
+          current_time=$(date -d "$current_time" -u +"%s")
+          difference=$((current_time - latest_release_time))
+          echo "difference=$difference" >> $GITHUB_OUTPUT
+
+      - name: Check time difference
+        id: check_time
+        if: ${{ github.event.inputs.IGNORE_COMPARE_TIME == 'false' || github.event_name == 'schedule' }}
+        run: |
+          current_time=${{ steps.time_difference.outputs.current_time }}
+          latest_release_time=${{ steps.latest_release.outputs.latest_release }}
+          difference=${{ steps.time_difference.outputs.difference }}
+          threshold=$((1 * 60 * 60)) # 1 시간 in seconds
+          if [ $difference -lt $threshold ]; then
+            echo "Time difference is less than 1 hour."
+            exit 0
+          else
+            echo "Time difference is greater than or equal to 1 hour."
+            exit 1
+          fi
+
+      - name: Perform action on release
+        if: ${{ success() }}
+        run: |
+          echo "Performing action on release with time difference greater than or equal to setting time."
+
+      - name: checkout repo content
+        uses: actions/checkout@main
+
+  build-apk:
+    needs: check-release
+    uses: ./.github/workflows/build-artifact.yml
+    with:
+      COMMIT_CHANGELOG: ${{ github.event.inputs.COMMIT_CHANGELOG == 'true' || github.event_name == 'schedule' }}
+      DEBUG_ENABLED: ${{ github.event.inputs.DEBUG_ENABLED == 'true' }}
+    secrets:
+      ENVS: ${{ secrets.ENVS }}
+      REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+
+  upload-to-github:
+    name: GitHub Upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-apk
+    if: ${{ github.event.inputs.GITHUB_UPLOAD == 'true' || github.event_name == 'schedule' }}
+
+    steps:
+      - name: Download Already Built APKs
+        uses: actions/download-artifact@main
+        with:
+          name: Built-APKs
+      - name: Get Date
+        id: get-date
+        run: |
+          latest_release_version=$(curl -s https://api.github.com/repos/inotia00/revanced-patches/releases/latest | jq -r '.tag_name')
+          echo "latest_release_version=$latest_release_version" >> $GITHUB_OUTPUT
+          latest_release_body=$(curl -s https://api.github.com/repos/inotia00/revanced-patches/releases/latest | jq -r '.body')
+          echo "$latest_release_body" > body.md
+          echo "date=$(TZ='Asia/Seoul' date +"%Y/%m/%d_%H:%M:%S")" >> $GITHUB_OUTPUT
+          curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md         
+
+
+      #- name: Delete Older Releases
+        #uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
+        #with:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #RELEASE_PATTERN: "Build*"
+
+      - name: Upload Build Artifact
+        uses: ncipollo/release-action@main
+        with:
+          #artifacts: "*-output.apk"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Build_${{ steps.get-date.outputs.date }}
+          tag: ${{ steps.get-date.outputs.latest_release_version }}
+          bodyFile: "body.md"
+          artifactErrorsFailBuild: true
+
+      - name: Sleep for 10 seconds
+        run: |
+          sleep 10
+
+
+  webdav-push:  
+    name: Webdav Push
+    needs: upload-to-github
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Download Already Built APKs
+      uses: actions/download-artifact@main
+      with:
+        name: Built-APKs
+        
+    - name: Webdav Push Action
+      uses: bxb100/action-upload-webdav@v1
+      with:
+        webdav_address: ${{ secrets.WEBDAV_ADDRESS }}
+        webdav_username: ${{ secrets.WEBDAV_USERNAME }}
+        webdav_password: ${{ secrets.WEBDAV_PASSWORD }}
+        webdav_upload_path: "/data/자료모음/앱모음/Youtube"
+        files: "./apks/*-output.apk"
+          
+  discord-webhook-push:  
+    name: Discord Webhook
+    needs: webdav-push
+    runs-on: ubuntu-latest
+    steps:
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        content: New youtube build release and upload to webdav.

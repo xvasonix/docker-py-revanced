@@ -225,7 +225,9 @@ class Parser(object):
             app.get_output_file_name(),
             self.KEYSTORE_ARG,
             app.keystore_name,
-            exp,
+            self.OPTIONS_ARG,
+            app.options_file,
+			exp,
         ]
         args[1::2] = map(self.config.temp_folder.joinpath, args[1::2])
         if app.old_key:
