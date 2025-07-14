@@ -47,7 +47,7 @@ You can use any of the following methods to build.
 
         </details>
 
-     5. If the building process is successful, you’ll get your APKs in the<br>
+     5. If the building process is successful, you'll get your APKs in the<br>
         <img src="https://i.imgur.com/S5d7qAO.png" width="700" style="left">
      6. Make sure to do below steps once in a while(daily or weekly) to keep the builder bug free.<br>
         <img src="https://i.imgur.com/CbdH7vM.png" width="700" style="left">
@@ -122,7 +122,6 @@ You can use any of the following methods to build.
 | [GLOBAL_OPTIONS_FILE*](#global-options-file)             |                 Options file to be used                 | [Builder's default file](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/options.json)              |
 | [GLOBAL_ARCHS_TO_BUILD*](#global-archs-to-build)         |            Arch to keep in the patched apk.             | All                                                                                                                   |
 | REDDIT_CLIENT_ID                                         |          Reddit Client ID to patch reddit apps          | None                                                                                                                  |
-| VT_API_KEY                                               |              Virus Total Key to scan APKs               | None                                                                                                                  |
 | [TELEGRAM_CHAT_ID](#telegram-support)                    |               Receiver in Telegram upload               | None                                                                                                                  |
 | [TELEGRAM_BOT_TOKEN](#telegram-support)                  |             APKs Sender for Telegram upload             | None                                                                                                                  |
 | [TELEGRAM_API_ID](#telegram-support)                     |            Used for telegram Authentication             | None                                                                                                                  |
@@ -131,24 +130,27 @@ You can use any of the following methods to build.
 | [APPRISE_URL](#apprise)                                  |                      Apprise URL .                      | None                                                                                                                  |
 | [APPRISE_NOTIFICATION_TITLE](#apprise)                   |              Apprise Notification Title .               | None                                                                                                                  |
 | [APPRISE_NOTIFICATION_BODY](#apprise)                    |               Apprise Notification Body .               | None                                                                                                                  |
+| MAX_RESOURCE_WORKERS                                     |        Maximum workers for downloading resources        | 3                                                                                                                     |
+| MAX_PARALLEL_APPS                                        |      Maximum number of apps to process in parallel      | 4                                                                                                                     |
+| DISABLE_CACHING                                          |          Disable download and resource caching          | False                                                                                                                 |
 
 `*` - Can be overridden for individual app.
 ### App Level Config
 
-| Env Name                                                      |                                               Description                                               | Default                        |
-|:--------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------:|:-------------------------------|
-| [~~**APP_NAME**_CLI_DL~~](#global-resources)                  |                     DL for CLI to be used for patching **APP_NAME**.(Disabled Temp)                     | GLOBAL_CLI_DL                  |
-| [**APP_NAME**_PATCHES_DL](#global-resources)                  |                          DL for Patches to be used for patching **APP_NAME**.                           | GLOBAL_PATCHES_DL              |
-| [**APP_NAME**_SPACE_FORMATTED_PATCHES](#global-resources)     |                          Whether patches are space formatted.   **APP_NAME**.                           | GLOBAL_SPACE_FORMATTED_PATCHES |
-| [**APP_NAME**_KEYSTORE_FILE_NAME](#global-keystore-file-name) |                              Key file to be used for signing **APP_NAME**.                              | GLOBAL_KEYSTORE_FILE_NAME      |
-| [**APP_NAME**_OLD_KEY](#global-keystore-file-name)            |      Whether key used was generated with cli > v4(new) <br/><br/>**APP_NAME**.      <br/>   <br/>       | GLOBAL_OLK_KEY                 |
-| [**APP_NAME**_ARCHS_TO_BUILD](#global-archs-to-build)         |                                Arch to keep in the patched **APP_NAME**.                                | GLOBAL_ARCHS_TO_BUILD          |
-| [**APP_NAME**_EXCLUDE_PATCH**](#custom-exclude-patching)      |                            Patches to exclude while patching  **APP_NAME**.                             | []                             |
-| [**APP_NAME**_INCLUDE_PATCH**](#custom-include-patching)      |                            Patches to include while patching  **APP_NAME**.                             | []                             |
-| [**APP_NAME**_VERSION](#app-version)                          |                                Version to use for download for patching.                                | Recommended by patch resources |
-| [**APP_NAME**_PACKAGE_NAME***](#any-patch-apps)               |                                  Package name of the app to be patched                                  | None                           |
-| [**APP_NAME**_DL_SOURCE***](#any-patch-apps)                  |                            Download source of any of the supported scrapper                             | None                           |
-| [**APP_NAME**_DL***](#app-dl)                                 |                                   Direct download Link for clean apk                                    | None                           |
+| Env Name                                                      |                                             Description                                              | Default                        |
+|:--------------------------------------------------------------|:----------------------------------------------------------------------------------------------------:|:-------------------------------|
+| [~~**APP_NAME**_CLI_DL~~](#global-resources)                  |                   DL for CLI to be used for patching **APP_NAME**.(Disabled Temp)                    | GLOBAL_CLI_DL                  |
+| [**APP_NAME**_PATCHES_DL](#global-resources)                  | DL for Patches to be used for patching **APP_NAME**. Supports multiple bundles via comma separation. | GLOBAL_PATCHES_DL              |
+| [**APP_NAME**_SPACE_FORMATTED_PATCHES](#global-resources)     |                         Whether patches are space formatted.   **APP_NAME**.                         | GLOBAL_SPACE_FORMATTED_PATCHES |
+| [**APP_NAME**_KEYSTORE_FILE_NAME](#global-keystore-file-name) |                            Key file to be used for signing **APP_NAME**.                             | GLOBAL_KEYSTORE_FILE_NAME      |
+| [**APP_NAME**_OLD_KEY](#global-keystore-file-name)            |     Whether key used was generated with cli > v4(new) <br/><br/>**APP_NAME**.      <br/>   <br/>     | GLOBAL_OLK_KEY                 |
+| [**APP_NAME**_ARCHS_TO_BUILD](#global-archs-to-build)         |                              Arch to keep in the patched **APP_NAME**.                               | GLOBAL_ARCHS_TO_BUILD          |
+| [**APP_NAME**_EXCLUDE_PATCH**](#custom-exclude-patching)      |                           Patches to exclude while patching  **APP_NAME**.                           | []                             |
+| [**APP_NAME**_INCLUDE_PATCH**](#custom-include-patching)      |                           Patches to include while patching  **APP_NAME**.                           | []                             |
+| [**APP_NAME**_VERSION](#app-version)                          |                              Version to use for download for patching.                               | Recommended by patch resources |
+| [**APP_NAME**_PACKAGE_NAME***](#any-patch-apps)               |                                Package name of the app to be patched                                 | None                           |
+| [**APP_NAME**_DL_SOURCE***](#any-patch-apps)                  |                           Download source of any of the supported scrapper                           | None                           |
+| [**APP_NAME**_DL***](#app-dl)                                 |                                  Direct download Link for clean apk                                  | None                           |
 
 `**` - By default all patches for a given app are included.<br>
 `**` - Can be used to included universal patch.<br>
@@ -248,10 +250,7 @@ You can use any of the following methods to build.
    5. APKMonk - Supports downloading any available version
        1. Link Format - https://www.apkmonk.com/app/<package-name>/
        2. Example Link - https://www.apkmonk.com/app/<package-name>/
-   6. Google Drive - Supports downloading from Google Drive lint
-       1. Link Format - https://drive.google.com/uc?<id>
-       2. Example Link - https://drive.google.com/uc?id=1ad44UTghbDty8o36Nrp3ZMyUzkPckIqY
-   7. APKEEP - Support downloading using [APKEEP](https://github.com/EFForg/apkeep)
+   6. APKEEP - Support downloading using [APKEEP](https://github.com/EFForg/apkeep)
       1. Link Format - apkeep
       2. Example Link - apkeep
       Note - You need to provide APKEEP_EMAIL and APKEEP_TOKEN in the **DOCKER_PY_REVANCED_SECRETS** Github Secrets.
@@ -309,10 +308,17 @@ You can use any of the following methods to build.
    ```
    With the config tool will try to patch YouTube with resources from inotia00 while other global resource will used
    for patching other apps.<br>
+
+      **Multi-Patching Support**: You can now use multiple patch bundles from different creators for the same app:
+   ```dotenv
+    # Comma-separated URLs
+    YOUTUBE_PATCHES_DL=https://github.com/ReVanced/revanced-patches,https://github.com/indrastorm/Dropped-patches
+   ```
+   The tool will download all specified patch bundles and apply them together using the ReVanced CLI's multiple `-p` argument support.<br>
    If you have want to provide resource locally in the apks folder. You can specify that by mentioning filename
    prefixed with `local://`.<br>
-   *Note* - The link provided must be DLs. Unless they are from GitHub.<br>
-   *Note* - If your patches resource are available on GitHub and you want to select latest resource without excluding
+   _Note_ - The link provided must be DLs. Unless they are from GitHub.<br>
+   _Note_ - If your patches resource are available on GitHub and you want to select latest resource without excluding
     pre-release you can add `latest-prerelease` to the URL.
     Example:
    ```dotenv
@@ -324,7 +330,7 @@ You can use any of the following methods to build.
    ```
    For above example tool while selecting latest patches will exclude any pre-release/beta ie. will consider only
     stable releases..<br>
-   *Note* - Some of the patch source like inotia00 still provides **-** separated patches while revanced shifted to
+   _Note_ - Some of the patch source like inotia00 still provides **-** separated patches while revanced shifted to
    Space formatted patches. Use `SPACE_FORMATTED_PATCHES` to define the type of patches.
 
 8. <a id="global-keystore-file-name"></a>If you don't want to use default keystore. You can provide your own by
@@ -372,7 +378,7 @@ You can use any of the following methods to build.
     ```dotenv
      YOUTUBE_ARCHS_TO_BUILD=arm64-v8a,armeabi-v7a
     ```
-    *Note* -
+    _Note_ -
     1. Possible values are: `armeabi-v7a`,`x86`,`x86_64`,`arm64-v8a`
     2. Make sure the patching resource(CLI) support this feature.
 11. <a id="extra-files"></a>If you want to include any extra file to the Github upload. Set comma arguments
