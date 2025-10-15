@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from threading import Lock
 from typing import Any, Self
+from zoneinfo import ZoneInfo
 
 from loguru import logger
 from pytz import timezone
@@ -133,21 +134,25 @@ class APP(object):
         Returns
         -------
             a string that represents the output file name for an APK file.
-        """            
-        
+        """
+
         #url = "https://api.github.com/repos/inotia00/revanced-cli/releases/latest"
         response = requests.get(self.cli_dl.replace("github.com/", "api.github.com/repos/"))
         data = response.json()
         cli_tag_name = data["tag_name"]
-        
+
         #url = "https://api.github.com/repos/inotia00/revanced-patches/releases/latest"
         response = requests.get(self.patches_dl.replace("github.com/", "api.github.com/repos/"))
         data = response.json()
         patches_tag_name = data["tag_name"]
-        
+
         current_date = datetime.now(timezone("Asia/Seoul"))
         formatted_date = current_date.strftime("%Y%b%d_%I%M%p").upper()
         return f"{self.app_name}-v{self.app_version}-cli_{cli_tag_name}-patches_{patches_tag_name}-output.apk"
+
+    def get_patch_bundles_versions(self: Self) -> list[str]:
+        """Get versions of all patch bundles."""
+        return [bundle["version"] for bundle in self.patch_bundles]
 
     def __str__(self: "APP") -> str:
         """Returns the str representation of the app."""
