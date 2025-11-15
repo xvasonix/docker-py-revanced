@@ -117,9 +117,9 @@ jobs:
               docker compose -f docker-compose-local.yml --build --no-cache
               docker compose -f docker-compose-local.yml up
           else
-              echo "Using Prod compose file."
-              docker compose --build --no-cache
-              docker compose up
+              echo "Using Prod compose file."              
+              docker compose -f docker-compose-local.yml --build --no-cache
+              docker compose -f docker-compose-local.yml up
           fi
       - name: Upload Build APKS
         uses: actions/upload-artifact@main
