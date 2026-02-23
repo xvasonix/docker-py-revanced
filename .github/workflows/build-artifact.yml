@@ -112,53 +112,54 @@ jobs:
         run: |
           mkdir -p apks
           
-          # 1. .env 파일에서 정보 읽기 (멀티라인/중복 방지를 위해 tail -1 사용)
-          # 버전 정보가 없으면 에러가 발생하므로 기본값을 확인하세요.
-          VERSION=$(grep "YOUTUBE_VERSION" .env | cut -d'=' -f2 | tr -d ' ' | tail -n 1)
-          # PATCH_APPS 목록을 가져와서 공백을 제거하고 리스트화
-          RAW_APPS=$(grep "PATCH_APPS" .env | cut -d'=' -f2 | tr -d ' ' | tail -n 1)
+          # 1. .env 파일에서 현재 빌드 대상(PATCH_APPS)과 버전(YOUTUBE_VERSION) 읽기
+          # xargs를 사용해 앞뒤 공백과 따옴표를 깔끔하게 제거합니다.
+          VERSION=$(grep "YOUTUBE_VERSION" .env | cut -d'=' -f2 | sed 's/["'\'']//g' | xargs)
+          RAW_APPS=$(grep "PATCH_APPS" .env | cut -d'=' -f2 | sed 's/["'\'']//g' | xargs)
           
           echo "Target Version: '$VERSION'"
-          echo "Configured Apps: '$RAW_APPS'"
-      
-          # 2. WebDAV 서버에서 파일 목록 가져오기
+          echo "Apps to Build: '$RAW_APPS'"
+  
+          # 2. WebDAV 서버에서 파일 목록 조회
           FILE_LIST=$(curl -s -u "${{ secrets.WEBDAV_USERNAME }}:${{ secrets.WEBDAV_PASSWORD }}" \
             -X PROPFIND --header "Depth: 1" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/")
           
-          # 3. 유연한 정규식으로 파일명 찾기
+          # 3. 정규식으로 버전에 맞는 '유일한' 원본 APK 찾기
           TARGET_FILE=$(echo "$FILE_LIST" | grep -oE "com\.google\.android\.youtube_[^<]*${VERSION}[^<]*\.apk" | head -1)
           
           if [ -z "$TARGET_FILE" ]; then
-            echo "::error::WebDAV에서 버전($VERSION)이 포함된 APK를 찾을 수 없습니다."
+            echo "::error::WebDAV에서 해당 버전($VERSION)의 원본 APK를 찾을 수 없습니다."
             exit 1
           fi
-          echo "Found Source File: $TARGET_FILE"
-      
-          # 4. 원본 파일 다운로드
+          echo "Source File found on WebDAV: $TARGET_FILE"
+  
+          # 4. 원본 파일을 임시로 하나만 다운로드 (base.apk)
           curl -u "${{ secrets.WEBDAV_USERNAME }}:${{ secrets.WEBDAV_PASSWORD }}" \
-            -L -o "base_youtube.apk" \
+            -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
-      
-          # 5. PATCH_APPS 리스트를 순회하며 정확한 앱 이름으로 복사
-          # 빌더가 사용하는 앱 이름(예: youtube_extended_blue_inotia00)과 똑같이 맞춰야 합니다.
+  
+          # 5. env의 PATCH_APPS 리스트를 순회하며 동적으로 파일 생성
+          # 쉼표(,)를 공백으로 바꿔서 루프를 돌립니다.
           IFS=',' read -ra ADDR <<< "$RAW_APPS"
           DOWNLOADED_LIST=""
-          
+        
           for APP in "${ADDR[@]}"; do
+            APP=$(echo $APP | xargs) # 각 앱 이름의 공백 제거
+            
+            # 유튜브 관련 앱인 경우에만 WebDAV에서 받은 원본을 해당 이름으로 복제
             if [[ $APP == youtube* ]]; then
-              echo "Creating local copy for: $APP"
-              cp "base_youtube.apk" "apks/$APP.apk"
-              # 리스트에 정확한 전체 앱 이름을 추가
+              echo "Matching: $APP -> apks/$APP.apk"
+              cp "base.apk" "apks/$APP.apk"
+              # 빌더가 인터넷 다운로드를 건너뛰도록 리스트 작성
               DOWNLOADED_LIST="${DOWNLOADED_LIST},${APP}"
             fi
           done
-          
-          # 6. .env 파일의 EXISTING_DOWNLOADED_APKS 설정을 정확한 값으로 덮어쓰기
-          # 기존에 잘못 들어간 설정을 무시하도록 파일 끝에 추가합니다.
+        
+          # 6. 최종 생성된 리스트를 .env 파일에 주입 (빌더 인식용)
           FINAL_LIST=${DOWNLOADED_LIST#,}
           echo "EXISTING_DOWNLOADED_APKS=$FINAL_LIST" >> .env
-          echo "Final EXISTING_DOWNLOADED_APKS set to: $FINAL_LIST"
+          echo "Success: Builder will use local APKs for: $FINAL_LIST"
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@master
