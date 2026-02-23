@@ -58,11 +58,12 @@ jobs:
           echo "${{ secrets.DOCKER_PY_REVANCED_SECRETS }}" >> .env
           echo "Added envs"
 
-      - name: Download APKs from WebDAV
+      # --- WebDAV 동적 APK 다운로드 및 매칭 로직 삽입 ---
+      - name: Dynamically Match and Download APKs from WebDAV
         run: |
           mkdir -p apks
           
-          # 시스템 변수로 등록된 값 확인 (빈값 방지)
+          # 시스템 변수에서 버전과 앱 목록 확인
           echo "Target Version: $YOUTUBE_VERSION"
           echo "Apps to Build: $PATCH_APPS"
 
@@ -85,7 +86,7 @@ jobs:
             -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
 
-          # 4. PATCH_APPS 리스트를 순회하며 동적으로 파일 복사 (확장자 없이 이름만 사용하여 빌더와 매칭)
+          # 4. PATCH_APPS 리스트를 순회하며 동적으로 파일 복사 (확장자 없이 저장하여 빌더와 매칭)
           IFS=',' read -ra ADDR <<< "$PATCH_APPS"
           DOWNLOADED_LIST=""
           
@@ -93,15 +94,17 @@ jobs:
             APP=$(echo $APP | xargs) # 공백 제거
             if [[ $APP == youtube* ]]; then
               echo "Matching: $APP -> apks/$APP"
+              # 빌더 로그에서 확장자 없는 이름을 찾으므로 확장자 없이 저장
               cp "base.apk" "apks/$APP"
               DOWNLOADED_LIST="${DOWNLOADED_LIST},${APP}"
             fi
           done
           
-          # 5. 빌더가 인터넷 다운로드를 건너뛰도록 EXISTING_DOWNLOADED_APKS 업데이트
+          # 5. 빌더가 로컬 파일을 사용하도록 EXISTING_DOWNLOADED_APKS 설정 업데이트
           FINAL_LIST=${DOWNLOADED_LIST#,}
           echo "EXISTING_DOWNLOADED_APKS=$FINAL_LIST" >> $GITHUB_ENV
           echo "EXISTING_DOWNLOADED_APKS=$FINAL_LIST" >> .env
+      # --- WebDAV 로직 종료 ---
 
       - name: Setup python
         uses: actions/setup-python@main
