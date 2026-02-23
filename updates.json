@@ -1,1 +1,104 @@
-{}
+{
+    "youtube_extended_red_inotia00": {
+        "app_version": "20.05.46",
+        "patches_versions": [
+            "v5.14.1"
+        ],
+        "cli_version": "v5.0.2",
+        "ms_epoch_since_patched": 1771846583962,
+        "date_patched": "2026-02-23 11:36:23.962438+05:30",
+        "app_dump": {
+            "app_name": "youtube_extended_red_inotia00",
+            "app_version": "20.05.46",
+            "experiment": false,
+            "cli_dl": "https://github.com/inotia00/revanced-cli/releases/latest",
+            "patches_dl_list": [
+                "https://github.com/inotia00/revanced-patches/releases/latest"
+            ],
+            "patches_dl": "https://github.com/inotia00/revanced-patches/releases/latest",
+            "exclude_request": [
+                "enable-debug-logging"
+            ],
+            "include_request": [],
+            "resource": {
+                "cli": {
+                    "file_name": "59e03b4fa52af9984fd49cfe5167c4f6bfd14074ef27c932c46557493f4d2ab5.jar",
+                    "version": "v5.0.2"
+                },
+                "patches": {
+                    "file_name": "1edabd0c85685442516e5d08e977bdeff88eca1749bb03de18ab4cd6a59bc8e8.rvp",
+                    "version": "v5.14.1"
+                }
+            },
+            "patch_bundles": [
+                {
+                    "name": "patches",
+                    "file_name": "1edabd0c85685442516e5d08e977bdeff88eca1749bb03de18ab4cd6a59bc8e8.rvp",
+                    "version": "v5.14.1"
+                }
+            ],
+            "no_of_patches": 67,
+            "keystore_name": "extended.keystore",
+            "archs_to_build": [],
+            "options_file": "options_red.json",
+            "download_file_name": "youtube_extended_red_inotia00",
+            "download_dl": "local://youtube_extended_red_inotia00",
+            "download_source": "https://www.apkmirror.com/apk/google-inc/youtube/",
+            "package_name": "com.google.android.youtube",
+            "old_key": true,
+            "patches": [],
+            "space_formatted": true
+        }
+    },
+    "youtube_extended_blue_inotia00": {
+        "app_version": "20.05.46",
+        "patches_versions": [
+            "v5.14.1"
+        ],
+        "cli_version": "v5.0.2",
+        "ms_epoch_since_patched": 1771846583973,
+        "date_patched": "2026-02-23 11:36:23.973288+05:30",
+        "app_dump": {
+            "app_name": "youtube_extended_blue_inotia00",
+            "app_version": "20.05.46",
+            "experiment": false,
+            "cli_dl": "https://github.com/inotia00/revanced-cli/releases/latest",
+            "patches_dl_list": [
+                "https://github.com/inotia00/revanced-patches/releases/latest"
+            ],
+            "patches_dl": "https://github.com/inotia00/revanced-patches/releases/latest",
+            "exclude_request": [
+                "enable-debug-logging"
+            ],
+            "include_request": [],
+            "resource": {
+                "cli": {
+                    "file_name": "59e03b4fa52af9984fd49cfe5167c4f6bfd14074ef27c932c46557493f4d2ab5.jar",
+                    "version": "v5.0.2"
+                },
+                "patches": {
+                    "file_name": "1edabd0c85685442516e5d08e977bdeff88eca1749bb03de18ab4cd6a59bc8e8.rvp",
+                    "version": "v5.14.1"
+                }
+            },
+            "patch_bundles": [
+                {
+                    "name": "patches",
+                    "file_name": "1edabd0c85685442516e5d08e977bdeff88eca1749bb03de18ab4cd6a59bc8e8.rvp",
+                    "version": "v5.14.1"
+                }
+            ],
+            "no_of_patches": 67,
+            "keystore_name": "extended.keystore",
+            "archs_to_build": [],
+            "options_file": "options_blue.json",
+            "download_file_name": "youtube_extended_red_inotia00",
+            "download_dl": "local://youtube_extended_red_inotia00",
+            "download_source": "https://www.apkmirror.com/apk/google-inc/youtube/",
+            "package_name": "com.google.android.youtube",
+            "old_key": true,
+            "patches": [],
+            "space_formatted": true
+        }
+    }
+}
