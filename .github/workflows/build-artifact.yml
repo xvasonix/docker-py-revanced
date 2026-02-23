@@ -60,30 +60,30 @@ jobs:
             sed -i 's/\r$//' .env
             grep -v '^#' .env | grep -v '^[[:space:]]*$' >> $GITHUB_ENV
             
-            echo "✅ Raw .env contents:"
-            cat .env
-            
-            echo "✅ Current Shell Variables (Filtered):"
-            export $(grep -v '^#' .env | xargs)
-            env | grep -E "PATCH_APPS|VERSION" | sort
+            echo "✅ Loaded Environment Variables (Current Session):"
+            # 현재 쉘 세션에 반영하여 아래 env 명령에서 보이게 함
+            set -a
+            source .env
+            set +a
+            env | grep -E "PATCH_APPS|VERSION|WEBDAV" | sort
           fi
 
-      # --- WebDAV 로직 (동적 버전 참조 및 빌더 인식 대응) ---
+      # --- WebDAV 로직 (IOException 및 빌더 인식 문제 해결 버전) ---
       - name: Download APKs from WebDAV
         run: |
           mkdir -p apks
           
-          # 1. PATCH_APPS 기반 버전 변수명 생성 및 값 획득
+          # 1. PATCH_APPS 기반 버전 변수명 생성 및 값 획득 (YOUTUBE_VERSION 대용)
           FIRST_APP=$(echo $PATCH_APPS | cut -d',' -f1 | xargs)
           VERSION_VAR_NAME="${FIRST_APP^^}_VERSION"
           VERSION="${!VERSION_VAR_NAME}"
           
           echo "Target Apps: $PATCH_APPS"
-          echo "Version Variable: $VERSION_VAR_NAME"
+          echo "Using Version Variable: $VERSION_VAR_NAME"
           echo "Detected Version: $VERSION"
 
           if [ -z "$VERSION" ]; then
-            echo "::error::$VERSION_VAR_NAME 값을 찾을 수 없습니다. .env 파일을 확인하세요."
+            echo "::error::$VERSION_VAR_NAME 값을 .env 에서 찾을 수 없습니다."
             exit 1
           fi
 
@@ -105,16 +105,17 @@ jobs:
             -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
 
-          # 5. 파일 복사 및 변수 등록
-          # CLI의 IOException 해결을 위해 파일 저장 시에는 .apk를 유지하고,
-          # 빌더 매칭 변수(EXISTING_DOWNLOADED_APKS) 등록 시에만 확장자를 제외합니다.
+          # 5. [중요] 디렉토리 기반 배치 (빌더와 CLI 호환성 해결)
+          # 앱 이름으로 폴더를 만들고 그 안에 APK를 넣으면, 
+          # 빌더는 폴더명을 파일로 인식하고 CLI는 폴더 내부의 APK를 자동으로 찾아 병합합니다.
           IFS=',' read -ra ADDR <<< "$PATCH_APPS"
           DOWNLOADED_LIST=""
           for APP in "${ADDR[@]}"; do
             APP=$(echo $APP | xargs)
             if [ -n "$APP" ] && [[ $APP == youtube* ]]; then
-              echo "Preparing: apks/$APP.apk"
-              cp "base.apk" "apks/$APP.apk"
+              echo "Creating bundle directory for: apks/$APP"
+              mkdir -p "apks/$APP"
+              cp "base.apk" "apks/$APP/$APP.apk"
               DOWNLOADED_LIST="${DOWNLOADED_LIST},${APP}"
             fi
           done
