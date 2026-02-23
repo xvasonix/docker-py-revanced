@@ -57,14 +57,13 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_PY_REVANCED_SECRETS }}" >> .env
           echo "Added envs"
+          cat .env >> $GITHUB_ENV
 
-      # --- 여기서부터 추가된 WebDAV 로직입니다 (기존 코드 유지) ---
       - name: Download APKs from WebDAV
         run: |
           mkdir -p apks
-          # 생성된 .env 파일에서 변수 로드
-          export $(grep -v '^#' .env | xargs)
           
+          # 시스템 변수로 등록된 값 확인 (빈값 방지)
           echo "Target Version: $YOUTUBE_VERSION"
           echo "Apps to Build: $PATCH_APPS"
 
@@ -87,24 +86,23 @@ jobs:
             -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
 
-          # 4. PATCH_APPS 리스트를 순회하며 동적으로 파일 복사 및 EXISTING_DOWNLOADED_APKS 생성
+          # 4. PATCH_APPS 리스트를 순회하며 동적으로 파일 복사 (확장자 없이 이름만 사용하여 빌더와 매칭)
           IFS=',' read -ra ADDR <<< "$PATCH_APPS"
           DOWNLOADED_LIST=""
           
           for APP in "${ADDR[@]}"; do
-            APP=$(echo $APP | xargs)
+            APP=$(echo $APP | xargs) # 공백 제거
             if [[ $APP == youtube* ]]; then
-              echo "Matching: $APP -> apks/$APP.apk"
-              cp "base.apk" "apks/$APP.apk"
+              echo "Matching: $APP -> apks/$APP"
+              cp "base.apk" "apks/$APP"
               DOWNLOADED_LIST="${DOWNLOADED_LIST},${APP}"
             fi
           done
           
-          # 5. 빌더가 로컬 파일을 인식하도록 시스템 변수 및 .env 업데이트
+          # 5. 빌더가 인터넷 다운로드를 건너뛰도록 EXISTING_DOWNLOADED_APKS 업데이트
           FINAL_LIST=${DOWNLOADED_LIST#,}
           echo "EXISTING_DOWNLOADED_APKS=$FINAL_LIST" >> $GITHUB_ENV
           echo "EXISTING_DOWNLOADED_APKS=$FINAL_LIST" >> .env
-      # --- 여기까지 추가된 로직입니다 ---
 
       - name: Setup python
         uses: actions/setup-python@main
@@ -169,11 +167,11 @@ jobs:
           if [[ "${{ inputs.CI_TEST }}" =~ ^(true|True|1)$ ]]; then
               echo "In CI Testing. Using local compose file."
               docker compose -f docker-compose-local.yml build --no-cache
-              docker compose -f docker-compose-local.yml up
+              docker compose -f docker-compose-local.yml up --exit-code-from docker-py-revanced
           else
               echo "Using Prod compose file."              
               docker compose -f docker-compose-local.yml build --no-cache
-              docker compose -f docker-compose-local.yml up
+              docker compose -f docker-compose-local.yml up --exit-code-from docker-py-revanced
           fi
 
       - name: Verify at least one APK was patched
