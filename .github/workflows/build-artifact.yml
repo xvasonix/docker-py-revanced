@@ -58,8 +58,6 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_PY_REVANCED_SECRETS }}" >> .env
           echo "Added envs"
-          # 모든 변수를 시스템 환경 변수로 등록하여 grep 없이 사용 가능하게 함
-          cat .env >> $GITHUB_ENV
 
       # --- WebDAV 동적 APK 매칭 로직 삽입 (grep 제거 및 확장자 보정) ---
       - name: Dynamically Match and Download APKs from WebDAV
