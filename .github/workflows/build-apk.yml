@@ -12,7 +12,9 @@ on:
         required: false
       REDDIT_CLIENT_ID:
         required: false
-      # WebDAV 연동을 위해 필요한 시크릿 정의
+      # 호출부에서 전달받는 시크릿들
+      PATCH_APPS:
+        required: false
       WEBDAV_ADDRESS:
         required: false
       WEBDAV_USERNAME:
@@ -53,62 +55,66 @@ jobs:
         run: |
           echo "${{ secrets.ENVS }}" >> .env
           echo "GITHUB_REPOSITORY=${{ github.repository }}" >> .env
-          # 주석과 빈 줄을 제거하고 순수 변수만 시스템 변수로 등록 (YAML 로드 방식)
-          sed '/^#/d; /^[[:space:]]*$/d' .env >> $GITHUB_ENV
+          # 시크릿에 들어있는 모든 KEY=VALUE를 시스템 변수로 등록 (동적 호출을 위한 필수 작업)
+          grep -v '^#' .env >> $GITHUB_ENV
 
       - name: Update Env from secrets for custom build
         run: |
           echo "${{ secrets.DOCKER_PY_REVANCED_SECRETS }}" >> .env
           echo "Added envs"
-          # 추가 시크릿의 내용도 시스템 환경 변수로 등록
-          sed '/^#/d; /^[[:space:]]*$/d' .env >> $GITHUB_ENV
+          grep -v '^#' .env >> $GITHUB_ENV
 
-      # --- WebDAV 로직 시작 (grep/source 없이 환경 변수 직접 참조) ---
+      # --- WebDAV 로직 시작 (PATCH_APPS 참조 및 동적 버전 호출) ---
       - name: Match and Download APKs from WebDAV
         run: |
           mkdir -p apks
 
-          # 1. 앱 이름 대문자화 및 버전 변수 역추적
-          # PATCH_APPS의 첫 번째 앱을 기준으로 버전 변수명을 동적 생성합니다.
-          FIRST_APP=$(echo $PATCH_APPS | cut -d',' -f1 | xargs)
-          VERSION_VAR_NAME="${FIRST_APP^^}_VERSION"
-          VERSION="${!VERSION_VAR_NAME}"
+          # 1. secrets.PATCH_APPS를 직접 참조하여 첫 번째 앱 이름 획득
+          APPS="${{ secrets.PATCH_APPS }}"
+          FIRST_APP=$(echo $APPS | cut -d',' -f1 | xargs)
           
-          echo "Apps to Build: $PATCH_APPS"
+          # 2. 님이 말씀하신 대로 "이름 대문자화 + _VERSION" 변수명 생성
+          VERSION_VAR="${FIRST_APP^^}_VERSION"
+          
+          # 3. 위에서 생성된 이름(예: YOUTUBE_EXTENDED_RED_INOTIA00_VERSION)으로 환경 변수값 동적 호출
+          # GitHub YAML 내부에서는 동적 호출이 안되므로 Bash의 ${!VAR} 방식을 사용합니다.
+          VERSION="${!VERSION_VAR}"
+          
+          echo "Target Apps: $APPS"
+          echo "Dynamic Version Var: $VERSION_VAR"
           echo "Detected Version: $VERSION"
 
-          # 2. WebDAV 서버에서 파일 목록 조회
+          # 4. WebDAV 서버에서 파일 목록 조회
           FILE_LIST=$(curl -s -u "${{ secrets.WEBDAV_USERNAME }}:${{ secrets.WEBDAV_PASSWORD }}" \
             -X PROPFIND --header "Depth: 1" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/")
           
-          # 3. 버전에 맞는 원본 APK 찾기
+          # 5. 정규식으로 버전에 맞는 원본 APK 찾기
           TARGET_FILE=$(echo "$FILE_LIST" | grep -oE "com\.google\.android\.youtube_[^<]*${VERSION}[^<]*\.apk" | head -1)
           
           if [ -z "$TARGET_FILE" ]; then
-            echo "::error::WebDAV에서 버전 $VERSION 의 APK를 찾을 수 없습니다."
+            echo "::error::WebDAV에서 버전 $VERSION 에 맞는 APK를 찾을 수 없습니다."
             exit 1
           fi
-          echo "Found APK: $TARGET_FILE"
 
-          # 4. 원본 파일 다운로드
+          # 6. 원본 파일 다운로드
           curl -u "${{ secrets.WEBDAV_USERNAME }}:${{ secrets.WEBDAV_PASSWORD }}" \
             -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
 
-          # 5. 확장자 없이 복사 (빌더 인식 규칙)
+          # 7. PATCH_APPS 리스트를 순회하며 확장자 없이 복사 (빌더 매칭 규칙)
           DOWNLOADED_LIST=""
-          IFS=',' read -ra ADDR <<< "$PATCH_APPS"
+          IFS=',' read -ra ADDR <<< "$APPS"
           for APP in "${ADDR[@]}"; do
             APP=$(echo $APP | xargs)
             if [[ $APP == youtube* ]]; then
-              echo "Matching: $APP -> apks/$APP"
+              echo "Preparing: apks/$APP"
               cp "base.apk" "apks/$APP"
               DOWNLOADED_LIST="${DOWNLOADED_LIST},${APP}"
             fi
           done
           
-          # 6. 결과 변수 등록
+          # 8. EXISTING_DOWNLOADED_APKS 등록
           echo "EXISTING_DOWNLOADED_APKS=${DOWNLOADED_LIST#,}" >> $GITHUB_ENV
           echo "EXISTING_DOWNLOADED_APKS=${DOWNLOADED_LIST#,}" >> .env
       # --- WebDAV 로직 종료 ---
@@ -176,11 +182,11 @@ jobs:
           if [[ "${{ inputs.CI_TEST }}" =~ ^(true|True|1)$ ]]; then
               echo "In CI Testing. Using local compose file."
               docker compose -f docker-compose-local.yml build --no-cache
-              docker compose -f docker-compose-local.yml up --exit-code-from revanced
+              docker compose -f docker-compose-local.yml up
           else
               echo "Using Prod compose file."              
               docker compose -f docker-compose-local.yml build --no-cache
-              docker compose -f docker-compose-local.yml up --exit-code-from revanced
+              docker compose -f docker-compose-local.yml up
           fi
 
       - name: Verify at least one APK was patched
