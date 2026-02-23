@@ -12,6 +12,12 @@ on:
         required: false
       REDDIT_CLIENT_ID:
         required: false
+      WEBDAV_ADDRESS:
+        required: false
+      WEBDAV_USERNAME:
+        required: false
+      WEBDAV_PASSWORD:
+        required: false
     inputs:
       CI_TEST:
         required: false
