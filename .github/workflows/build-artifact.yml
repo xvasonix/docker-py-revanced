@@ -50,37 +50,31 @@ jobs:
 
       - name: Update Env for custom build
         run: |
+          # 1. 시크릿 내용을 .env 파일에 병합
           echo "${{ secrets.ENVS }}" >> .env
           echo "GITHUB_REPOSITORY=${{ github.repository }}" >> .env
-          # ENVS 내의 PATCH_APPS, YOUTUBE_VERSION 등을 시스템 변수로 등록
-          while read -r line || [ -n "$line" ]; do
-            if [[ "$line" =~ ^[^#[:space:]]+=[^#]+ ]]; then
-              echo "$line" >> $GITHUB_ENV
-            fi
-          done << 'EOF'
-          ${{ secrets.ENVS }}
-          EOF
-
-      - name: Update Env from secrets for custom build
-        run: |
           echo "${{ secrets.DOCKER_PY_REVANCED_SECRETS }}" >> .env
-          echo "Added envs"
-          while read -r line || [ -n "$line" ]; do
-            if [[ "$line" =~ ^[^#[:space:]]+=[^#]+ ]]; then
-              echo "$line" >> $GITHUB_ENV
-            fi
-          done << 'EOF'
-          ${{ secrets.DOCKER_PY_REVANCED_SECRETS }}
-          EOF
+          
+          # 2. .env 파일을 읽어 주석과 빈 줄을 제외한 모든 변수를 시스템 환경 변수로 등록
+          if [ -f .env ]; then
+            sed -i 's/\r$//' .env # 윈도우 줄바꿈 제거
+            grep -v '^#' .env | grep -v '^[[:space:]]*$' >> $GITHUB_ENV
+            echo "Loaded variables from .env to GITHUB_ENV"
+          fi
 
-      # --- WebDAV 로직 (헤더 선언 없이 전개된 환경 변수 직접 사용) ---
+      # --- WebDAV 로직 (파일에서 불러온 변수 $ 사용) ---
       - name: Download APKs from WebDAV
         run: |
           mkdir -p apks
           
-          # $GITHUB_ENV에 등록된 변수($)를 직접 참조
+          # 변수 로드 상태 확인
           echo "Apps to Build: $PATCH_APPS"
           echo "Target Version: $YOUTUBE_VERSION"
+
+          if [ -z "$YOUTUBE_VERSION" ]; then
+            echo "::error::.env 파일에서 YOUTUBE_VERSION을 찾을 수 없습니다."
+            exit 1
+          fi
 
           # 1. WebDAV 서버에서 파일 목록 조회
           FILE_LIST=$(curl -s -u "${{ secrets.WEBDAV_USERNAME }}:${{ secrets.WEBDAV_PASSWORD }}" \
@@ -100,7 +94,7 @@ jobs:
             -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
 
-          # 4. $PATCH_APPS 리스트 순회 및 확장자 제거 복사
+          # 4. $PATCH_APPS 리스트를 순회하며 확장자 없이 복사
           IFS=',' read -ra ADDR <<< "$PATCH_APPS"
           DOWNLOADED_LIST=""
           for APP in "${ADDR[@]}"; do
@@ -115,6 +109,7 @@ jobs:
           # 5. EXISTING_DOWNLOADED_APKS 등록
           echo "EXISTING_DOWNLOADED_APKS=${DOWNLOADED_LIST#,}" >> $GITHUB_ENV
           echo "EXISTING_DOWNLOADED_APKS=${DOWNLOADED_LIST#,}" >> .env
+      # --- WebDAV 로직 종료 ---
 
       - name: Setup python
         uses: actions/setup-python@main
