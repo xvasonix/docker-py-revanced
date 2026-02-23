@@ -89,6 +89,10 @@ jobs:
     secrets:
       ENVS: ${{ secrets.ENVS }}
       REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+      # 아래와 같이 시크릿을 자식 워크플로우로 토스합니다.
+      WEBDAV_ADDRESS: ${{ secrets.WEBDAV_ADDRESS }}
+      WEBDAV_USERNAME: ${{ secrets.WEBDAV_USERNAME }}
+      WEBDAV_PASSWORD: ${{ secrets.WEBDAV_PASSWORD }}
 
   upload-to-github:
     name: GitHub Upload
