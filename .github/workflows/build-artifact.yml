@@ -12,10 +12,6 @@ on:
         required: false
       REDDIT_CLIENT_ID:
         required: false
-      PATCH_APPS:
-        required: false
-      YOUTUBE_VERSION:
-        required: false
       WEBDAV_ADDRESS:
         required: false
       WEBDAV_USERNAME:
@@ -56,19 +52,33 @@ jobs:
         run: |
           echo "${{ secrets.ENVS }}" >> .env
           echo "GITHUB_REPOSITORY=${{ github.repository }}" >> .env
+          # ENVS 내의 PATCH_APPS, YOUTUBE_VERSION 등을 시스템 변수로 등록
+          while read -r line || [ -n "$line" ]; do
+            if [[ "$line" =~ ^[^#[:space:]]+=[^#]+ ]]; then
+              echo "$line" >> $GITHUB_ENV
+            fi
+          done << 'EOF'
+          ${{ secrets.ENVS }}
+          EOF
 
       - name: Update Env from secrets for custom build
         run: |
           echo "${{ secrets.DOCKER_PY_REVANCED_SECRETS }}" >> .env
           echo "Added envs"
+          while read -r line || [ -n "$line" ]; do
+            if [[ "$line" =~ ^[^#[:space:]]+=[^#]+ ]]; then
+              echo "$line" >> $GITHUB_ENV
+            fi
+          done << 'EOF'
+          ${{ secrets.DOCKER_PY_REVANCED_SECRETS }}
+          EOF
 
+      # --- WebDAV 로직 (헤더 선언 없이 전개된 환경 변수 직접 사용) ---
       - name: Download APKs from WebDAV
-        env:
-          PATCH_APPS: ${{ secrets.PATCH_APPS }}
-          YOUTUBE_VERSION: ${{ secrets.YOUTUBE_VERSION }}
         run: |
           mkdir -p apks
           
+          # $GITHUB_ENV에 등록된 변수($)를 직접 참조
           echo "Apps to Build: $PATCH_APPS"
           echo "Target Version: $YOUTUBE_VERSION"
 
@@ -77,7 +87,7 @@ jobs:
             -X PROPFIND --header "Depth: 1" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/")
           
-          # 2. 정규식으로 YOUTUBE_VERSION에 맞는 원본 APK 찾기
+          # 2. $YOUTUBE_VERSION 으로 파일 매칭
           TARGET_FILE=$(echo "$FILE_LIST" | grep -oE "com\.google\.android\.youtube_[^<]*${YOUTUBE_VERSION}[^<]*\.apk" | head -1)
           
           if [ -z "$TARGET_FILE" ]; then
@@ -90,12 +100,12 @@ jobs:
             -L -o "base.apk" \
             "${{ secrets.WEBDAV_ADDRESS }}/data/자료모음/앱모음/Youtube/apks/$TARGET_FILE"
 
-          # 4. PATCH_APPS 리스트를 순회하며 빌더가 인식하도록 확장자 없이 복사
+          # 4. $PATCH_APPS 리스트 순회 및 확장자 제거 복사
           IFS=',' read -ra ADDR <<< "$PATCH_APPS"
           DOWNLOADED_LIST=""
           for APP in "${ADDR[@]}"; do
             APP=$(echo $APP | xargs)
-            if [[ $APP == youtube* ]]; then
+            if [ -n "$APP" ] && [[ $APP == youtube* ]]; then
               echo "Preparing: apks/$APP"
               cp "base.apk" "apks/$APP"
               DOWNLOADED_LIST="${DOWNLOADED_LIST},${APP}"
@@ -104,7 +114,7 @@ jobs:
           
           # 5. EXISTING_DOWNLOADED_APKS 등록
           echo "EXISTING_DOWNLOADED_APKS=${DOWNLOADED_LIST#,}" >> $GITHUB_ENV
-      # --- WebDAV 로직 종료 ---
+          echo "EXISTING_DOWNLOADED_APKS=${DOWNLOADED_LIST#,}" >> .env
 
       - name: Setup python
         uses: actions/setup-python@main
